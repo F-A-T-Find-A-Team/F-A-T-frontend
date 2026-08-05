@@ -354,7 +354,14 @@ function MainPage({setisLogin, account, setAccount}) {
   
   const [leftsideChose, setLeftsideChose] = useState("탐색");
   const [pjList, setPjList] = useState([]);
-  const [clickedPj, setClickedPj] = useState({});
+  
+  const [clickedPj, setClickedPj] = useState({ pjPerson: [] });
+
+  const updateProject = (updatedPj) => {
+    setClickedPj(updatedPj);
+    setPjList(pjList.map(pj => pj.pjtitle === updatedPj.pjtitle ? updatedPj : pj));
+  };
+
   const renderUserProfileImage = (id) => {
       return (
         <div 
@@ -394,7 +401,7 @@ function MainPage({setisLogin, account, setAccount}) {
           {renderUserProfileImage("main-profileImage")}
           <div id='user_inform'>
             <span id='main-userName'>{account.name}</span>
-            <span id='main-userNumber'>{account.number}·{account.jungong}</span>
+            <span id='main-userNumber'>{account.number}{account.jungong ? `·${account.jungong}` : ''}</span>
           </div>
         </div>
       </div>
@@ -403,9 +410,14 @@ function MainPage({setisLogin, account, setAccount}) {
         <div style={{ display: leftsideChose === "탐색" ? "block" : "none", width: "100%", height: "100%" }}>
           <SearchPage setLeftsideChose={setLeftsideChose} pjList={pjList} setClickedPj={setClickedPj} renderUserProfileImage={renderUserProfileImage} account={account}/>
         </div>
+        
+        {/* 💡 수정 2: clickedPj 정보가 확실히 있을 때만 렌더링되게 하여 완전히 에러를 차단! */}
         <div style={{ display: leftsideChose === "프젝자세히" ? "block" : "none", width: "100%", height: "100%" }}>
-          <ProjectMore clickedPj={clickedPj} setClickedPj={setClickedPj} setLeftsideChose={setLeftsideChose} account={account} renderUserProfileImage={renderUserProfileImage}/>
+          {clickedPj.pjtitle && 
+            <ProjectMore clickedPj={clickedPj} setClickedPj={setClickedPj} updateProject={updateProject} setLeftsideChose={setLeftsideChose} account={account} renderUserProfileImage={renderUserProfileImage}/>
+          }
         </div>
+
         <div style={{ display: leftsideChose === "프로젝트 생성" ? "block" : "none", width: "100%", height: "100%" }}>
           <PjcreatePage setLeftsideChose={setLeftsideChose} pjList={pjList} setPjList={setPjList} account={account}/>
         </div>
@@ -427,7 +439,10 @@ function SearchPage({setLeftsideChose, pjList, setClickedPj, renderUserProfileIm
   
   const [currentSearch, setCurrentSearch] = useState("전체");
 
-  const getDDay = (deadlineStr) => {
+
+  const getDDay = (deadlineStr, isDone) => {
+    if (isDone) return "마감됨";
+
     if (!deadlineStr) return "무기한";
     
     const today = new Date();
@@ -470,12 +485,13 @@ function SearchPage({setLeftsideChose, pjList, setClickedPj, renderUserProfileIm
         <div key={index} onClick={()=>{setLeftsideChose("프젝자세히"); setClickedPj(project)}}>
           <div id='project-header'>
             <h3>{project.pjtitle}</h3>
-            <div>{getDDay(project.pjdeadline)}</div>
+            {/* 💡 getDDay 호출 시 project.pjdone 값을 같이 넘겨줍니다 */}
+            <div>{getDDay(project.pjdeadline, project.pjdone)}</div>
           </div>
 
           <div id='search-userProfile'>
             {renderUserProfileImage("pjProfile")}
-            <span>{account.name}</span>
+            <span>{project.pjPerson?.[0]?.name || account.name}</span>
             <span id="PM">PM</span>
           </div>
 
@@ -649,13 +665,25 @@ function PjcreatePage({setLeftsideChose, pjList, setPjList, account}) {
   )
 }
 
-function ProjectMore({clickedPj, setClickedPj, setLeftsideChose, account, renderUserProfileImage}) {
+function ProjectMore({clickedPj, setClickedPj, updateProject, setLeftsideChose, account, renderUserProfileImage}) {
   
   function ProgressClick(value) {
-    setClickedPj({...clickedPj,pjprogress:value})
+    if (account.email !== clickedPj.pjPerson?.[0]?.email) {
+      alert("PM만 변경할 수 있어요.");
+      return;
+    }
+    
+    const updatedPj = {
+      ...clickedPj,
+      pjprogress: value,
+      pjdone: value === 3 ? true : false 
+    };
+    updateProject(updatedPj);
   }
 
-  const getDDay = (deadlineStr) => {
+  const getDDay = (deadlineStr, isDone) => {
+    if (isDone) return "마감됨";
+
     if (!deadlineStr) return "무기한";
     
     const today = new Date();
@@ -697,14 +725,13 @@ function ProjectMore({clickedPj, setClickedPj, setLeftsideChose, account, render
               }
           }
         >
-          {!Pj.image && Pj.name}
         </div>
       );
     };
 
   const PjMemberAdd = (newMember) => {
 
-    const isAlreadyMember = clickedPj.pjPerson.some(
+    const isAlreadyMember = clickedPj.pjPerson?.some(
       (person) => person.email === newMember.email
     );
 
@@ -713,15 +740,17 @@ function ProjectMore({clickedPj, setClickedPj, setLeftsideChose, account, render
       return;
     }
 
-    if (clickedPj.pjPerson.length >= clickedPj.pjcount) {
+    if (clickedPj.pjPerson?.length >= clickedPj.pjcount) {
       alert("모집 인원이 마감되었습니다.");
       return;
     }
 
-    setClickedPj({...clickedPj,
-      pjpersonCount: clickedPj.pjPerson.length + 1,
-      pjPerson: [...clickedPj.pjPerson, newMember]
-    })
+    const updatedPj = {
+      ...clickedPj,
+      pjpersonCount: (clickedPj.pjPerson?.length || 0) + 1,
+      pjPerson: [...(clickedPj.pjPerson || []), newMember]
+    };
+    updateProject(updatedPj);
   }
 
   return (
@@ -731,7 +760,7 @@ function ProjectMore({clickedPj, setClickedPj, setLeftsideChose, account, render
         <h2>{clickedPj.pjtitle}</h2>
         <div id='more-userProfile'>
           {renderUserProfileImage("moreProfile")}
-          <span>{account.name}</span>
+          <span>{clickedPj.pjPerson?.[0]?.name || account.name}</span>
           <span id="PM">PM</span>
         </div>
         
@@ -794,7 +823,7 @@ function ProjectMore({clickedPj, setClickedPj, setLeftsideChose, account, render
         <div id='more-rightBox'>
           <div id='mright-header'>
             <div id='mright-end'>
-              <span>{getDDay(clickedPj.pjdeadline)}</span>
+              <span>{getDDay(clickedPj.pjdeadline, clickedPj.pjdone)}</span>
               <span className='mright-ex'>마감</span>
             </div>
             <div id='mright-mojib'>
@@ -807,7 +836,7 @@ function ProjectMore({clickedPj, setClickedPj, setLeftsideChose, account, render
             <span>현재 팀원</span>
             <div id='mright-teamBox'>
               {clickedPj.pjPerson && clickedPj.pjPerson.map((person, i) => (
-                renderTeamProfileImage(`mright-profiles-${i}`, person)
+                renderTeamProfileImage('mright-profiles', person)
               ))}
             </div>
 
@@ -818,7 +847,7 @@ function ProjectMore({clickedPj, setClickedPj, setLeftsideChose, account, render
           </div>
 
             <div id='mright-bottom'>
-              {clickedPj.pjPerson && account === clickedPj.pjPerson[0] ? <PmExcuseButton/> : ""}
+              {clickedPj.pjPerson && account.email === clickedPj.pjPerson?.[0]?.email ? <PmButtonSelect ProgressClick={ProgressClick} clickedPj={clickedPj}/> : ""}
             </div>
         </div>
       </div>
@@ -826,12 +855,33 @@ function ProjectMore({clickedPj, setClickedPj, setLeftsideChose, account, render
   )
 }
 
-function PmExcuseButton() {
+function PmButtonSelect({clickedPj, ProgressClick}) {
+
+  return (
+    <>
+      {clickedPj.pjdone === true ? <PmReview/> : <PmExcuseButton ProgressClick={ProgressClick}/>}
+    </>
+  )
+}
+
+function PmExcuseButton({ProgressClick}) {
   
   return (
     <div id='excuse-box'>
       <span id='excuse-span'>PM 전용</span>
-      <button>&#10003; 프로젝트 완료하기</button>
+      <button 
+      onClick={()=>{ProgressClick(3)}}>&#10003; 프로젝트 완료하기</button>
+    </div>
+  )
+}
+
+function PmReview() {
+
+  return (
+    <div id='review-box'>
+      <span id='excuse-span'>PM 전용</span>
+      <button 
+      onClick={()=>{ProgressClick(3)}}>&#9733; 팀원 피드백 작성</button>
     </div>
   )
 }

@@ -1165,3 +1165,22 @@
   background-color: #eef2f6;
   margin-top: 8.4px;
 }
+#review-box {
+  display: flex;
+  flex-direction: column;
+}
+#excuse-span {
+  font-size: 14px;
+  color: gray;
+  font-weight: 400;
+}
+#review-box > button {
+  margin-top: 10.4px;
+  background-color: #21f1a8;
+  border: 0px;
+  height: 48px;
+  font-size: 14.4px;
+  font-weight: 600;
+  border-radius: 14px;
+  cursor: pointer;
+}
