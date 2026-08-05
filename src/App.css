@@ -1118,3 +1118,50 @@
   border-radius: 14px;
   cursor: pointer;
 }
+#Email-rightside {
+  width: 56%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#Email-box {
+  width: 400px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+#Email-logo {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  background-color: #dbfdf1;
+  background-image: url('./assets/emailLogo.png');
+  background-repeat: no-repeat;
+  background-position: 50% 40%;
+}
+#Email-spanBox {
+  font-size: 14.4px;
+  color: gray;
+  font-weight: 500;
+}
+#Email-spanBox span:first-of-type {
+  color: #21f1a8;
+  font-weight: 600;
+}
+#Email-timeBox {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+  font-size: 14px;
+  font-weight: 500;
+}
+#Email-numberBox {
+  width: 100%;
+  height: 60.4px;
+  border: 1px solid rgba(181, 181, 181, 0.423);
+  border-radius: 14.4px;
+  background-color: #eef2f6;
+  margin-top: 8.4px;
+}
