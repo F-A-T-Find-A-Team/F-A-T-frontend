@@ -1,0 +1,1120 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+#fucking_body {
+  min-height: 100vh;
+  width: 100%;
+}
+#fucking_body.bg-login {
+  background-image: linear-gradient(90deg, #21f1a8 44%, white 40%);
+}
+#Login_box {
+  display: flex;
+}
+#Login-leftside {
+  width: 44%;
+  max-width: 44%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 46px;
+  position: fixed;
+  background-color: #21f1a8;
+}
+#leftside_block {
+  width: 44%;
+  height: 100vh;
+}
+#Login-leftside h1 {
+  font-size: 44px;
+  font-weight: 800;
+  margin-top: 24px;
+}
+#Login-leftside h2 {
+  font-size: 28.4px;
+  margin-bottom: 14px;
+}
+#Login-leftside span {
+  font: 500 14.5px / 1.75 Pretendard;
+  opacity: 0.8;
+}
+#Login-leftside p {
+  color: rgb(23, 23, 23);
+  opacity: 0.8;
+}
+#Login-rightside {
+  width: 56%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#Login-rightside-box {
+  margin-left: 140px;
+  width: 540px;
+  height: 640px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+#Login-rightside-box div h1 {
+  font: 800 36px Pretendard;
+  letter-spacing: -0.4px;
+}
+#Login-rightside-box div span {
+  color: rgb(23, 23, 23);
+  opacity: 0.8;
+  font-size: 14.4px;
+}
+
+#email_box span{
+  color: black;
+  opacity: 1;
+  font-weight: 600;
+}
+#email_box input {
+  width: 400px;
+  height: 54px;
+  border-radius: 14px;
+  background-color: #f1f5f9;
+  border: 0.14px solid rgb(223, 223, 223);
+  font-size: 16.4px;
+  padding: 14px;
+}
+#Login_button {
+  width: 400px;
+  height: 54px;
+  border-radius: 14px;
+  background-color: #20eda5;
+  border: 0px;
+  cursor: pointer;
+  margin-top: 30.4px;
+}
+#Login_button:hover {
+  background-color: #19cb8d;
+}
+#gayjoygo {
+  width: 400px;
+  text-align: center;
+  font-size: 14.5px;
+  color: rgb(74, 74, 74);
+  opacity: 0.8;
+}
+#gayib{
+  color: #20eda5 !important;
+  font-weight: 600;
+  cursor: pointer;
+}
+.else {
+  width: 176.4px;
+  display: inline-block;
+  height: 0.1px;
+  background-color: rgba(183, 183, 183, 0.803);
+}
+#else span {
+  margin: 0px 10.4px;
+  font-size: 12.4px !important;
+  color: rgba(66, 66, 66, 0.803) !important;
+}
+#github_login {
+  width: 400px;
+  height: 54px;
+  border-radius: 14px;
+  background-color: white;
+  border: 0.14px solid rgb(223, 223, 223);
+  display: grid;
+  align-items: center;
+  padding: 14px;
+  font-weight: 700;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+}
+#github_login:hover {
+  background-color: rgb(225, 225, 225);
+}
+#github_login img {
+  width: 34px;
+  height: 34px;
+  position: absolute;
+  left: 14px;
+}
+#Login-rightside-box div {
+  margin: 8.4px 0px;
+}
+#Sign-rightside{
+  width: 56%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+#Sign_box {
+  width: 540px;
+  height: 740px;
+}
+#Sign_box > span:first-of-type {
+  color: rgb(159, 159, 159);
+  font-size: 14px;
+  margin-top: 24px;
+  font-weight: 500;
+}
+#sign_profile {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+}
+#profile_photo {
+  width: 84px;
+  height: 84px;
+  border-radius: 1013px;
+  border: 1.64px dashed rgb(181, 181, 181);
+  background-color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12.4px;
+  color: rgb(161, 161, 161);
+  font-weight: 800;
+}
+#sign_input_box {
+  margin-left: 24px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+}
+.sign_input {
+  height: 44px;
+  margin: 4px 0px;
+  border-radius: 6.4px;
+  border: 1px solid rgb(181, 181, 181);
+  background-color: #f1f5f9;
+  padding: 14px;
+  box-sizing: border-box;
+  font-size: 16.4px;
+  font-weight: 500;
+}
+#introduce_box {
+  margin-top: 24px;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+}
+#Sign_box span {
+  font-weight: 600;
+  font-size: 14px;
+}
+#Sign_box h2:first-of-type {
+  cursor: pointer;
+}
+#introduce_count {
+  color: gray;
+  font-weight: 500 !important;
+}
+#introduce_area {
+  margin-top: 14px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 500px !important;
+  min-height: 80px !important;
+  max-height: 400px;
+  border-radius: 6.4px;
+  border: 1px solid rgb(181, 181, 181);
+  background-color: #f1f5f9;
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 500;
+}
+#sign_gender {
+  margin-top: 34.4px;
+}
+#gender_selector button{
+  width: 244px;
+  height: 50.4px;
+  border: 1px solid rgb(181, 181, 181);
+  margin-top: 10.4px;
+  border-radius: 14px;
+  background-color: white;
+  font-size: 16.4px;
+  font-weight: 600;
+  transition-duration: 0.24s;
+  cursor: pointer;
+}
+#gender_selector button.active {
+  background-color: #21f1a8;
+}
+#gender_selector {
+  width: 500px;
+  display: flex;
+  justify-content: space-between;
+}
+#sign_jungong {
+  margin-top: 34.4px;
+}
+#jungong_selector {
+  margin-top: 6.4px;
+  display: flex;
+  justify-content: left;
+  flex-wrap: wrap;
+  width: 500px;
+}
+#jungong_selector button {
+  padding: 0px 14px;
+  box-sizing: border-box;
+  margin: 4px;
+  line-height: 32.4px;
+  height: 34.4px;
+  border-radius: 10.4px;
+  border: 1px solid rgb(181, 181, 181);
+  background-color: white;
+  cursor: pointer;
+  font-weight: 600;
+  transition-duration: 0.24s;
+}
+#jungong_selector button.active {
+  background-color: #21f1a8;
+}
+#jungong_inform {
+  color: gray;
+  font-weight: 500 !important;
+}
+#club_selector {
+  margin-top: 6.4px;
+  display: flex;
+  justify-content: left;
+  flex-wrap: wrap;
+  width: 500px;
+}
+#club_selector button {
+  padding: 0px 14px;
+  box-sizing: border-box;
+  margin: 4px;
+  line-height: 32.4px;
+  height: 34.4px;
+  border-radius: 10.4px;
+  border: 1px solid rgb(181, 181, 181);
+  background-color: white;
+  cursor: pointer;
+  font-weight: 600;
+  transition-duration: 0.24s;
+}
+#club_selector button.active {
+  background-color: #21f1a8;
+}
+#sign_done_button {
+  width: 500px;
+  height: 54px;
+  background-color: #21f1a8;
+  margin-top: 84px;
+  border-radius: 14px;
+  text-align: center;
+  line-height: 54px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 0px;
+  font-size: 16.4px;
+}
+
+/* 메인페이지 */
+
+#main-background {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+}
+#main-title {
+  margin-left: 10px;
+}
+#main-leftside {
+  width: 38.4vh;
+  height: 100vh;
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  border-right: 1.4px solid rgb(220, 220, 220);
+  padding: 14px;
+  box-sizing: border-box;
+  background-color: white;
+}
+#main-leftside button {
+  width: 34vh;
+  height: 54.4px;
+  background-color: white;
+  display:flex;
+  align-items: center;
+  border: 0px;
+  font-size: 16.4px;
+  border-radius: 10.4px;
+  font-weight: 600;
+  cursor : pointer;
+  transition-duration: 0.14s;
+}
+#main-leftside button:hover {
+  background-color: rgba(224, 224, 224, 0.525);
+}
+#main-leftside button.active {
+  background-color: #dbfdf1;
+  color: #21f1a8;
+}
+#main-leftside button.active div {
+  background-color: #21f1a8;
+}
+#main-leftside button div {
+  width: 1.24vh;
+  height: 1.24vh;
+  background-color: gray;
+  border-radius: 1013px;
+  margin-right: 14px;
+  margin-left: 14px;
+}
+#main-search {
+  margin-top: 26.4px;
+}
+#main-userProfile {
+  width: 34vh;
+  height: 70.4px;
+  background-color: #ebeff3;
+  bottom: 10.4px;
+  border-radius: 12.4px;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  padding: 0px 14px;
+}
+#main-profileImage {
+  width: 54px;
+  height: 54px;
+  border-radius: 1013px;
+  background-color: #cff5ec;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14.4px;
+  color: #21f1a8;
+  font-weight: 800;
+}
+#user_inform {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10.4px;
+}
+#main-userName {
+  font-size: 15.4px;
+  font-weight: 600;
+}
+#main-userNumber {
+  font-size: 14.4px;
+  color: gray;
+}
+
+#main-rightside {
+  width: 80vw;
+  height: 100vh;
+  background-color: #f8fafc;
+  padding: 30.4px;
+  margin-left: 38.4vh;
+  overflow-x: hidden;
+}
+#main-rightside h2 {
+  font-weight: 1000;
+  font-size: 28.4px;
+  margin-bottom: 6.4px;
+}
+#main-header {
+  height: 74px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20.4px;
+}
+#main-header div span{
+  font-size: 14.4px;
+  font-weight: 500;
+  color: gray;
+}
+#new_project_button {
+  height: 44px;
+  width: 140px;
+  background-color:#20eda5;
+  text-align: center;
+  line-height: 44px;
+  border-radius: 10.4px;
+  font-weight: 600;
+  cursor: pointer;
+}
+#search_list button{
+  height: 37.4px;
+  padding: 0px 18.4px;
+  line-height: 36.4px;
+  background-color: white;
+  border: 1px solid rgba(181, 181, 181, 0.423);
+  border-radius: 44px;
+  font-weight: 700;
+  margin-right: 10.4px;
+  transition-duration: 0.14s;
+  cursor: pointer;
+}
+#search_list button.active {
+  background-color: #20eda5;
+  border: 0px;
+}
+
+#pjcreate-box {
+  width: 924px;
+  margin: 0px auto;
+}
+#pjcreate-header {
+  margin-bottom: 24px;
+}
+#pjcreate-header span {
+  font-size: 14.4px;
+  font-weight: 500;
+  color: gray;
+}
+#pjcreate-container {
+  display: flex;
+  flex-direction: column;
+}
+#pjcreate-container > div {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+}
+#pjcreate-container span {
+  font-size: 14.4px;
+  font-weight: 600;
+  color: rgb(52, 52, 52);
+}
+#pjcreate-title input {
+  height: 44px;
+  margin-top: 8.4px;
+  border-radius: 9.4px;
+  border: 1px solid rgba(181, 181, 181, 0.423);
+  padding: 0px 14px;
+  font-size: 15.4px;
+  font-weight: 600;
+}
+#pj-content_area {
+  margin-top: 14px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  min-height: 124px !important;
+  max-height: 400px;
+  border-radius: 6.4px;
+  border: 1px solid rgba(181, 181, 181, 0.423);
+  background-color: white;
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 500;
+}
+#pjcreate-jungongSelector {
+  margin-top: 6.4px;
+  display: flex;
+  justify-content: left;
+  flex-wrap: wrap;
+  margin-bottom: 6.4px;
+}
+#pjcreate-jungongSelector button {
+  padding: 0px 14px;
+  box-sizing: border-box;
+  margin: 4px;
+  line-height: 32.4px;
+  height: 34.4px;
+  border-radius: 10.4px;
+  border: 1px solid rgb(181, 181, 181);
+  background-color: white;
+  cursor: pointer;
+  font-weight: 600;
+  transition-duration: 0.24s;
+}
+#pjcreate-jungongSelector button.active {
+  background-color: #20eda5;
+}
+#pj-jungong-alarm {
+  height: 40px;
+  background-color: #d5f9ee;
+  border-radius: 9.4px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  font-size: 13.4px;
+  font-weight: 500;
+}
+#pj-jungong-alarm > div {
+  width: 18.4px;
+  height: 18.4px;
+  border-radius: 60%;
+  background-color: #21f1a8;
+  text-align: center;
+  font-size: 12.4px;
+  line-height: 16.4px;
+  font-weight: 600;
+  margin: 0px 10px 0px 14px;
+}
+#pj-free{
+  color: rgba(128, 128, 128, 0.716) !important;
+  font-size: 14px !important;
+  font-weight: 400px !important;
+}
+#pj-skill_input {
+  height: 44px;
+  width: 92%;
+  border-radius: 9.4px;
+  border: 1px solid rgba(181, 181, 181, 0.423);
+  padding: 0px 14px;
+  font-size: 15.4px;
+  font-weight: 500;
+  margin-right: 1%;
+}
+#pj-skillBox {
+  margin-top: 8.4px;
+  display: flex;
+  align-items: center;
+}
+#pj-skill_add {
+  width: 7%;
+  height: 44px;
+  background-color: #21f1a8;
+  border-radius: 9.4px;
+  text-align: center;
+  line-height: 44px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+#pg-added_skill {
+  display: flex;
+  margin-top: 14px;
+}
+#pg-added_skill > div {
+  height: 40px;
+  border: 1px solid rgba(181, 181, 181, 0.423);
+  border-radius: 9.4px;
+  padding: 0px 10px;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: white;
+  margin-right: 8.4px;
+  display: flex;
+  align-items: center;
+}
+#pg-added_skill > div > div {
+  width: 24px;
+  height: 24px;
+  background-color: #e7eaf0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 7.4px;
+  border-radius: 6.4px;
+  color: gray;
+  cursor: pointer;
+  font-weight: 600;
+}
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Jua&family=Montenegrin+Gothic+One&display=swap');
+#pj-day > input {
+  height: 44px;
+  border-radius: 9.4px;
+  border: 1px solid rgba(181, 181, 181, 0.423);
+  padding: 0px 14px;
+  font-size: 15.4px;
+  font-weight: 600;
+  margin-top: 8.4px;
+  font-family: "Jua", sans-serif;
+}
+#pj-countBox {
+  background-color: white;
+  height: 54px;
+  width: 240px;
+  border-radius: 9.4px;
+  border: 1px solid rgba(181, 181, 181, 0.423);
+  padding: 0px 8px;
+  font-size: 15.4px;
+  font-weight: 600;
+  margin-top: 8.4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#pj-countBox > div {
+  width: 42px;
+  height: 42px;
+  border-radius: 10.4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 22.4px;
+  font-weight: 600;
+  cursor: pointer;
+}
+#pj-countBox > span {
+  font-size: 17.4px;
+  font-weight: 600;
+}
+#pjc-minus {
+  background-color: #f1f5f9;
+  color: #21f1a8;
+}
+#pjc-plus {
+  background-color: #21f1a8;
+}
+#boninpoham{
+  color: rgba(128, 128, 128, 0.716) !important;
+  font-size: 14px !important;
+  font-weight: 400px !important;
+}
+#pj-SubmitOrNot {
+  display: flex;
+  flex-direction: row !important;
+  margin-top: 14px;
+  gap: 1vw;
+}
+#pj-cancel {
+  background-color: white;
+  height: 54px;
+  width: 17vw;
+  border-radius: 9.4px;
+  border: 1px solid rgba(181, 181, 181, 0.423);
+  padding: 0px 8px;
+  font-size: 15.4px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+#pj-submit {
+  background-color: #21f1a8;
+  height: 54px;
+  width: 70%;
+  border-radius: 9.4px;
+  border: 1px solid rgba(181, 181, 181, 0.423);
+  padding: 0px 8px;
+  font-size: 15.4px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+#search-pjList {
+  margin-top: 20.4px;
+  display: flex;
+  gap: 16.4px;
+}
+#search-pjList > div {
+  border: 1px solid rgba(181, 181, 181, 0.423);
+  border-radius: 14px;
+  background-color: white;
+  min-width: 304px;
+  padding: 14px;
+  transition: transform 0.14s linear;
+  cursor: pointer;
+}
+#search-pjList > div:hover {
+  border: 1px solid #20eda5;
+  transform: translateY(-1.4px);
+}
+#project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#project-header > div {
+  background-color: #dbfdf1;
+  padding: 2px 8.4px;
+  border-radius: 6.4px;
+  font-size: 12.4px;
+  color:#20eda5;
+  font-weight: 600;
+}
+#search-userProfile {
+  display: flex;
+  align-items: center;
+  gap: 6.4px;
+  margin-top: 10.4px;
+}
+#search-userProfile > span {
+  font-size: 14px;
+  font-weight: 500;
+}
+#PM {
+  border: 0.84px solid #20eda5;
+  color: #20eda5;
+  font-size: 10.4px !important;
+  width: 24.4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4.2px;
+}
+#search-userProfile > div {
+  width: 20.4px;
+  height: 20.4px;
+  background-color: rgba(190, 189, 189, 0.452);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 54%;
+  font-size: 10.4px;
+  font-weight: 600;
+}
+#search-jungongBox {
+  margin-top: 14.2px;
+  display: flex;
+  gap: 6.4px;
+}
+#search-jungongBox span {
+  font-size: 12.4px;
+  padding: 1.64px 7.4px;
+  border-radius: 4.2px;
+  text-align: center;
+  font-weight: 600;
+}
+#search-jungongBox span.FE, #search-jungongBox span.Flutter {
+  background-color: #86a3e33b;
+  color: #2f6cf0;
+}
+#search-jungongBox span.BE, #search-jungongBox span.security, #search-jungongBox span.android {
+  background-color: #ddf5ed;
+  color: #23bc88;
+}
+#search-jungongBox span.EM\(FW\), #search-jungongBox span.Game {
+  background-color: #feebde;
+  color: #f98049;
+}
+#search-jungongBox span.EM\(HW\) {
+  background-color: #fcf4dc;
+  color: #eab353;
+}
+#search-jungongBox span.AI {
+  background-color: #efe8fe;
+  color: #8b5cf6;
+}
+#search-jungongBox span.UI, #search-jungongBox span.iOS {
+  background-color: #fce5f1;
+  color: #ed4899;
+}
+#search-skillBox {
+  margin-top: 8.4px;
+  display: flex;
+  gap: 6.4px;
+}
+#search-skillBox span {
+  background-color: #e3e7eb;
+  font-size: 12.4px;
+  padding: 1.64px 7.4px;
+  border-radius: 4.2px;
+  text-align: center;
+  font-weight: 600;
+}
+#project-bottom {
+  margin-top: 14.2px;
+  border-top: 1px solid #e3e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0px 4px 0px;
+}
+#pjbottom-continue {
+  font-size: 12.4px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+#pjbottom-continue > div {
+  width: 10.4px;
+  height: 10.4px;
+  background-color: #21f1a8;
+  border-radius: 54%;
+  margin-right:4.2px;
+}
+#pjbottom-mojib {
+  color: gray;
+  font-size: 14.2px;
+}
+
+#more-box {
+  display: flex;
+  padding: 0px 40px;
+}
+#more-gotosearch {
+  color: gray;
+  font-size: 14.4px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#more-leftside {
+  width: 44vw;
+}
+#more-leftside h2 {
+  margin-top: 24px;
+}
+#more-userProfile {
+  display: flex;
+  align-items: center;
+  gap: 6.4px;
+  margin-top: 10.4px;
+}
+#more-userProfile > span {
+  font-size: 15.4px;
+  font-weight: 500;
+  margin-right: 3.4px;
+}
+#more-userProfile > div {
+  width: 26.4px;
+  height: 26.4px;
+  background-color: rgba(190, 189, 189, 0.452);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 54%;
+  font-size: 10.4px;
+  font-weight: 600;
+}
+#more-progressBox {
+  background-color: white;
+  border: 1px solid rgba(181, 181, 181, 0.423);
+  margin-top: 24px;
+  border-radius: 16.4px;
+  width: 640px;
+  height: 204px;
+  padding: 22.4px;
+  font-size: 14.4px;
+  font-weight: 500;
+}
+#more-progress {
+  display: flex;
+  margin-top: 24px;
+}
+#more-progress > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#more-progress > div > div {
+  width: 40px;
+  height: 40px;
+  background-color: #f1f5f9;
+  color: #9a9a9d;
+  border: 1px solid rgba(181, 181, 181, 0.423);
+  border-radius: 54%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-size: 16.4px;
+  margin-bottom: 8.4px;
+  cursor: pointer;
+  transition-duration: 0.24s;
+}
+#more-progress > div.active > div {
+  background-color: #21f1a8;
+  color: black;
+}
+#more-progress > div.cactive > span {
+  font-weight: 600 !important;
+}
+#more-progress > div > span {
+  font-weight: 500;
+  color: #9a9a9a;
+}
+#more-progress > div.active > span {
+  color: black;
+}
+.progress-way {
+  width: 164px;
+  height: 2.64px;
+  background-color: #e0e0e0;
+  margin: 0px 8.4px;
+}
+.progress-way.active {
+  background-color: #21f1a8;
+}
+#more-inform {
+  font-size: 12.4px;
+  margin-top: 20.4px;
+  display: inline-block;
+  color: #828282;
+}
+#more-inform > span {
+  color: #21f1a8;
+}
+.more-contentsBox {
+  margin-top: 26.4px;
+  display: flex;
+  flex-direction: column;
+}
+.more-contentsBox > span:first-of-type{
+  font-size: 15.4px;
+  font-weight: 600;
+}
+#more-contents {
+  margin-top: 10.4px;
+  font-size: 14.7px;
+}
+#more-jungongBox {
+  display: flex;
+  gap: 6.4px;
+}
+#more-jungongBox span {
+  margin-top: 10.4px;
+  font-size: 12.4px;
+  padding: 5.64px 12.4px;
+  border-radius: 6.4px;
+  text-align: center;
+  font-weight: 600;
+}
+#more-jungongBox span.FE, #more-jungongBox span.Flutter {
+  background-color: #86a3e33b;
+  color: #2f6cf0;
+}
+#more-jungongBox span.BE, #more-jungongBox span.security, #more-jungongBox span.android {
+  background-color: #ddf5ed;
+  color: #23bc88;
+}
+#more-jungongBox span.EM\(FW\), #more-jungongBox span.Game {
+  background-color: #feebde;
+  color: #f98049;
+}
+#more-jungongBox span.EM\(HW\) {
+  background-color: #fcf4dc;
+  color: #eab353;
+}
+#more-jungongBox span.AI {
+  background-color: #efe8fe;
+  color: #8b5cf6;
+}
+#more-jungongBox span.UI, #more-jungongBox span.iOS {
+  background-color: #fce5f1;
+  color: #ed4899;
+}
+#more-skillBox {
+  margin-top: 8.4px;
+  display: flex;
+  gap: 6.4px;
+}
+#more-skillBox span {
+  background-color: #e3e7eb;
+  font-size: 12.4px;
+  padding: 5.64px 12.4px;
+  border-radius: 4.2px;
+  text-align: center;
+  font-weight: 600;
+}
+#more-rightside {
+  margin-left: 9.4%;
+}
+#more-rightBox {
+  width: 340px;
+  height: 440px;
+  background-color: white;
+  border: 1px solid rgba(181, 181, 181, 0.423);
+  margin-top: 14%;
+  border-radius: 16.4px;
+  padding: 18.4px;
+}
+#mright-header {
+  display: flex;
+  justify-content: space-around;
+  height: 14%;
+}
+  #mright-end {
+    width: 50%;
+  }
+  #mright-mojib {
+    width: 50%;
+    border-left: 1.54px solid rgba(181, 181, 181, 0.423);
+  }
+
+#mright-header > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#mright-end span:first-of-type{
+  color: #21f1a8;
+  font-size: 22.4px;
+  font-weight: 500;
+}
+.mright-ex {
+  font-size: 12.4px;
+  margin-top: 6.4px;
+  color: rgb(150, 150, 150);
+}
+#mright-mojib span:first-of-type {
+  font-size: 22.4px;
+  font-weight: 500;
+}
+
+#mright-box {
+  display: flex;
+  flex-direction: column;
+  margin-top: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(181, 181, 181, 0.423);
+}
+#mright-box span:first-of-type {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+#mright-teamBox {
+  margin-top: 10.4px;
+  display: flex;
+  gap: 7.4px;
+}
+#mright-profiles {
+  width: 37.4px;
+  height: 37.4px;
+  border-radius: 54%;
+}
+#mright-submit {
+  margin-top: 24px;
+  height: 50.4px;
+  border: 0px;
+  background-color: #21f1a8;
+  border-radius: 10.4px;
+  font-size: 15.4px;
+  font-weight: 600;
+  cursor: pointer;
+}
+#mright-pmExcuse {
+  margin-top: 14px;
+  height: 50.4px;
+  border: 0px;
+  background-color: white;
+  border: 1px solid #21f1a8;
+  color: #21f1a8;
+  border-radius: 10.4px;
+  font-size: 15.4px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#excuse-box {
+  display: flex;
+  flex-direction: column;
+}
+#mright-bottom {
+  margin-top: 14px;
+}
+#excuse-span {
+  font-size: 14px;
+  color: gray;
+  font-weight: 400;
+}
+#excuse-box > button {
+  margin-top: 10.4px;
+  background-color: black;
+  color: white;
+  height: 48px;
+  font-size: 14.4px;
+  font-weight: 600;
+  border-radius: 14px;
+  cursor: pointer;
+}
