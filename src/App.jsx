@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import './App.css'
 import githubIcon from './assets/github.webp'
 import basicProfile from './assets/snake.webp'
@@ -69,7 +69,16 @@ function SignOrEmail({setIsSign, setisLogin, setAccount}) {
 
   return(
     <>
-      {emailconfirm ? <EmailConfirm setEmailconfirm={setEmailconfirm} userEmail={userEmail}/> : <SignPage setIsSign={setIsSign} setisLogin={setisLogin} setAccount={setAccount} setEmailconfirm={setEmailconfirm} setUserEmail={setUserEmail}/>}
+      {emailconfirm ? 
+        <EmailConfirm 
+          setEmailconfirm={setEmailconfirm} 
+          userEmail={userEmail} 
+          setisLogin={setisLogin} 
+          setAccount={setAccount} 
+        /> 
+        : 
+        <SignPage setIsSign={setIsSign} setisLogin={setisLogin} setAccount={setAccount} setEmailconfirm={setEmailconfirm} setUserEmail={setUserEmail}/>
+      }
     </>
   )
 }
@@ -221,9 +230,69 @@ function SignPage({setIsSign, setisLogin, setAccount, setEmailconfirm, setUserEm
   )
 }
 
-function EmailConfirm({setEmailconfirm, userEmail}) {
+function EmailConfirm({setEmailconfirm, userEmail, setisLogin, setAccount, account}) {
+  const [code, setCode] = useState(['', '', '', '', '', '']);
+  const inputRefs = useRef([]);
+
+  const [timeLeft, setTimeLeft] = useState(180);
+  const [isTimerRunning, setIsTimerRunning] = useState(true);
+
+  useEffect(() => {
+    let timer;
+    if (isTimerRunning && timeLeft > 0) {
+      timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
+    } else if (timeLeft === 0) {
+      setIsTimerRunning(false);
+    }
+    return () => clearInterval(timer);
+  }, [isTimerRunning, timeLeft]);
+
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  };
+
+  const handleChange = (index, value) => {
+    const numericValue = value.replace(/[^0-9]/g, '');
+    if (!numericValue && value !== '') return;
+
+    const newCode = [...code];
+    newCode[index] = numericValue;
+    setCode(newCode);
+
+    if (numericValue && index < 5) {
+      inputRefs.current[index + 1].focus();
+    }
+  };
+
+  const handleKeyDown = (index, e) => {
+    if (e.key === 'Backspace') {
+      if (code[index] !== '') {
+        const newCode = [...code];
+        newCode[index] = '';
+        setCode(newCode);
+      } else if (index > 0) {
+        inputRefs.current[index - 1].focus();
+      }
+    }
+  };
+
+  const handleVerify = (e) => {
+    e.preventDefault();
+    const finalCode = code.join('');
+
+    if (finalCode.length < 6) {
+      alert("6자리 인증번호를 모두 입력해주세요.");
+      return;
+    }
+
+    alert("인증이 완료되었습니다!");
+    setisLogin(true);
+  };
+
   return (
-    <div id='Login_box'>
+    <form onSubmit={handleVerify} id='Login_box'>
       <div id='leftside_block'></div>
       <div id="Login-leftside">
         <h1>F.A.T.</h1>
@@ -237,23 +306,47 @@ function EmailConfirm({setEmailconfirm, userEmail}) {
       <div id='Email-rightside'>
         <div id="Email-box">
           <div id='Email-logo'></div>
-          <h2>이메일 인증</h2>
+          <h2 onClick={() => setEmailconfirm(false)} style={{ cursor: 'pointer' }}>&lt; 이메일 인증</h2>
           <div id='Email-spanBox'>
-            <span>{userEmail}</span><span>로 6자리 코드를 보냈어요.</span>
+            <span>{userEmail || "학교 이메일"}</span><span>로 6자리 코드를 보냈어요.</span>
           </div>
 
           <div id='Email-confirmBox'>
             <div id='Email-timeBox'>
               <span>인증번호</span>
-
-              <span>10:13</span>
+              <span>{formatTime(timeLeft)}</span>
             </div>
 
-            <input id='Email-numberBox'></input>
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginTop: '15px' }}>
+              {code.map((digit, idx) => (
+                <input
+                  key={idx}
+                  ref={(el) => (inputRefs.current[idx] = el)}
+                  type='text'
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleChange(idx, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(idx, e)}
+                  style={{
+                    width: '40px',
+                    height: '45px',
+                    fontSize: '20px',
+                    textAlign: 'center',
+                    border: '1px solid #ccc',
+                    borderRadius: '6px',
+                    outline: 'none'
+                  }}
+                />
+              ))}
+            </div>
           </div>
+
+          <button id='sign_done_button' type='submit' style={{ width: '100%', marginTop: '20px' }}>
+            인증 확인
+          </button>
         </div>
       </div>
-    </div>
+    </form>
   );
 }
 
@@ -424,7 +517,8 @@ function PjcreatePage({setLeftsideChose, pjList, setPjList, account}) {
       pjcount : pjCount,
       pjprogress: 1,
       pjpersonCount: 1,
-      pjPerson : [account]
+      pjPerson : [account],
+      pjdone: false
     });
 
     const handleInput = (e) => {
