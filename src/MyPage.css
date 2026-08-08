@@ -1,0 +1,584 @@
+/* 전체 컨테이너 및 배경 설정 */
+.mypage-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  color: #333;
+}
+
+/* --- 공통 유틸리티 --- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.dot {
+  margin: 0 4px;
+  color: #adb5bd;
+}
+.grid-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f1f3f5;
+}
+
+/* --- 상단 프로필 카드 --- */
+.profile-header-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f1f3f5;
+  margin-bottom: 24px;
+}
+
+.profile-info-section {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.profile-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background-color: #e3fae8;
+  color: #0ca678;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-name-row h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #212529;
+}
+
+.gender-badge {
+  background-color: #f8f9fa;
+  color: #868e96;
+  border: 1px solid #e9ecef;
+}
+
+.profile-sub-info {
+  font-size: 0.9rem;
+  color: #868e96;
+}
+
+.major-badge {
+  background-color: #e7f5ff;
+  color: #339af0;
+  width: fit-content;
+  margin-top: 4px;
+}
+
+.edit-profile-btn {
+  background-color: #f1f3f5;
+  color: #495057;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.edit-profile-btn:hover { background-color: #e9ecef; }
+
+/* --- 자기소개 섹션 --- */
+.profile-bio {
+  margin-bottom: 24px;
+  padding: 0 10px;
+}
+.profile-bio p {
+  margin: 0;
+  font-size: 1rem;
+  color: #495057;
+  line-height: 1.5;
+}
+
+/* --- 메인 콘텐츠 그리드 --- */
+.mypage-grid {
+  display: flex;
+  gap: 20px;
+}
+
+/* --- 왼쪽: 깃허브 카드 --- */
+.github-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.github-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.github-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.github-icon {
+  width: 20px;
+  height: 20px;
+  background-color: #212529;
+  border-radius: 4px; /* 임시 아이콘, 필요시 svg로 교체 */
+}
+
+.github-title h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #212529;
+}
+
+.connected-badge {
+  background-color: #e3fae8;
+  color: #0ca678;
+}
+
+.github-link {
+  color: #20c997;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  display: inline-block;
+}
+.github-link:hover { text-decoration: underline; }
+
+.language-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.lang-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.lang-name {
+  width: 80px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+.progress-bar-bg {
+  flex: 1;
+  height: 8px;
+  background-color: #f1f3f5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #20c997;
+  border-radius: 4px;
+}
+
+.github-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.footer-info {
+  font-size: 0.85rem;
+  color: #868e96;
+}
+
+.disconnect-btn {
+  background: none;
+  border: none;
+  color: #868e96;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.disconnect-btn:hover { color: #495057; }
+
+/* --- 오른쪽: 카드 컬럼 --- */
+.right-cards-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 통계 카드 */
+.stats-card {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 30px 24px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat-num {
+  font-size: 2rem;
+  font-weight: 700;
+}
+.text-green { color: #20c997; }
+.text-black { color: #212529; }
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #868e96;
+  font-weight: 500;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 50px;
+  background-color: #e9ecef;
+}
+
+/* 액션 카드 (피드백, 알림) */
+.action-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.1s ease;
+}
+.action-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.action-info h4 {
+  margin: 0 0 6px 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #212529;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.star-rating {
+  color: #20c997;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.action-info p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #868e96;
+}
+
+.arrow-icon {
+  font-size: 1.5rem;
+  color: #ced4da;
+  font-weight: 300;
+}
+
+/* 반응형 처리 */
+@media (max-width: 768px) {
+  .mypage-grid {
+    flex-direction: column;
+  }
+}
+
+/* --- MyPageRemake Styles --- */
+
+.remake-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.remake-card {
+  background-color: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 16px;
+  padding: 28px 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+/* 상단 헤더 프로필 */
+.remake-header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.remake-profile-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.remake-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background-color: #d8fcf0;
+  color: #2ce08a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 800;
+}
+
+.remake-profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.remake-name-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.remake-name-row h2 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  color: #1a1a1a;
+}
+
+.remake-badge-gray {
+  background-color: #f1f3f5;
+  color: #868e96;
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.remake-sub-info {
+  color: #868e96;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.remake-majors-display {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.remake-badge-blue {
+  background-color: #eef2ff;
+  color: #5c7cfa;
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.remake-save-btn {
+  background-color: #2ce08a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 28px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.remake-save-btn:hover {
+  background-color: #25c97b;
+}
+
+/* 폼 요소 디자인 */
+.remake-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.remake-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.remake-form-group label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #343a40;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.remake-form-group label span {
+  font-size: 13px;
+  font-weight: 500;
+  color: #adb5bd;
+}
+
+.remake-textarea {
+  width: 100%;
+  background-color: #f8f9fa;
+  border: 1px solid #f1f3f5;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 15px;
+  color: #212529;
+  resize: none;
+  min-height: 80px;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.remake-textarea:focus {
+  border-color: #2ce08a;
+}
+
+/* 토글 버튼 (성별, 전공 등) */
+.remake-btn-group, .remake-tag-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.remake-toggle-btn, .remake-tag-btn {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  color: #495057;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.remake-toggle-btn.active, .remake-tag-btn.active {
+  background-color: #2ce08a;
+  border-color: #2ce08a;
+  color: white;
+}
+
+.remake-toggle-btn:hover:not(.active), .remake-tag-btn:hover:not(.active) {
+  background-color: #f8f9fa;
+}
+
+/* 스킬 스택 입력 영역 */
+.remake-skill-input-row {
+  display: flex;
+  gap: 12px;
+}
+
+.remake-input {
+  flex: 1;
+  background-color: #f8f9fa;
+  border: 1px solid #f1f3f5;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 15px;
+  color: #212529;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.remake-input:focus {
+  border-color: #2ce08a;
+}
+
+.remake-add-btn {
+  background-color: #21f1a8;
+  color: black;
+  border: none;
+  border-radius: 12px;
+  padding: 0 28px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.remake-skill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.remake-skill-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f1f3f5;
+  color: #495057;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.remake-skill-delete {
+  background: none;
+  border: none;
+  color: #adb5bd;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.remake-skill-delete:hover {
+  color: #495057;
+}

@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
 import './App.css'
+import './ChatPage.css'
 import githubIcon from './assets/github.webp'
 import basicProfile from './assets/snake.webp'
+import './MyPage.css';
 
 function Sign({setisLogin, setAccount}) {
 
@@ -93,12 +95,17 @@ function SignPage({setIsSign, setisLogin, setAccount, setEmailconfirm, setUserEm
   const [userPw, setUserPw] = useState("");
   const [userIntro, setUserIntro] = useState("");
 
+  // 🌟 관심 기술 스택 상태 추가
+  const [skills, setSkills] = useState([]);
+  const [currentSkill, setCurrentSkill] = useState("");
+
   const [profileImage, setProfileImage] = useState(null);
   const fileInputRef = useRef(null);
 
   const handlePhotoClick = () => {
     fileInputRef.current.click();
   };
+  
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -119,6 +126,28 @@ function SignPage({setIsSign, setisLogin, setAccount, setEmailconfirm, setUserEm
     setUserIntro(text);
   };
 
+  // 🌟 기술 스택 추가 로직
+  const addSkill = (e) => {
+    if (e) e.preventDefault();
+    if (currentSkill.trim() !== "" && !skills.includes(currentSkill.trim())) {
+      setSkills([...skills, currentSkill.trim()]);
+      setCurrentSkill("");
+    }
+  };
+
+  // 🌟 엔터키 입력 시 폼 제출 방지 및 스택 추가
+  const handleSkillKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // 엔터 누를 때 회원가입 폼이 제출되는 것을 막음
+      addSkill();
+    }
+  };
+
+  // 🌟 기술 스택 삭제 로직
+  const removeSkill = (skillToRemove) => {
+    setSkills(skills.filter(skill => skill !== skillToRemove));
+  };
+
   const SignSubmit = (e) => {
     e.preventDefault();
 
@@ -134,7 +163,9 @@ function SignPage({setIsSign, setisLogin, setAccount, setEmailconfirm, setUserEm
       introduce: userIntro,
       image: profileImage,
       number: email.slice(4,8),
-      jungong: jungongSelect
+      jungong: jungongSelect,
+      gender: genderSelect,
+      skills: skills // 🌟 가입 시 기술 스택 배열도 계정 정보에 함께 저장
     })
 
     setUserEmail(email);
@@ -187,7 +218,7 @@ function SignPage({setIsSign, setisLogin, setAccount, setEmailconfirm, setUserEm
               <input className='sign_input' id='id_input' placeholder='이름' required onChange={(e)=>{setUserName(e.target.value)}}></input>
               <input className='sign_input' id='password_input'
                 placeholder='이메일(ex: mte@dsm.hs.kr)' type='email' required onChange={(e)=>{setEmail(e.target.value)}}></input>
-              <input className='sign_input' type='password' placeholder='비밀번호' onChange={(e)=>{setUserPw(e.target.value);}}></input>
+              <input className='sign_input' type='password' placeholder='비밀번호' required onChange={(e)=>{setUserPw(e.target.value);}}></input>
             </div>
           </div>
 
@@ -220,6 +251,34 @@ function SignPage({setIsSign, setisLogin, setAccount, setEmailconfirm, setUserEm
               <button className={jungongSelect === "Game" ? "active" : ""} onClick={()=> {setJungongSelect("Game")}} type='button'>Game</button>
               <button className={jungongSelect === "security" ? "active" : ""} onClick={()=> {setJungongSelect("security")}} type='button'>security</button>
               <button className={jungongSelect === "AI" ? "active" : ""} onClick={()=> {setJungongSelect("AI")}} type='button'>AI</button>
+            </div>
+          </div>
+
+          {/* 🌟 관심 기술 스택 UI 변경 부분 */}
+          <div id='sign_skill'>
+            <div style={{ marginBottom: '12px' }}>
+              <span>관심 기술 스택</span><span className='pj-free' style={{ color: '#adb5bd', fontSize: '13px', fontWeight: '500' }}> · 자유 입력</span>
+            </div>
+            
+            <div className="remake-skill-input-row">
+              <input 
+                type="text" 
+                className="remake-input"
+                placeholder="기술을 입력하고 Enter (예: Next.js)"
+                value={currentSkill}
+                onChange={(e) => setCurrentSkill(e.target.value)}
+                onKeyDown={handleSkillKeyDown}
+              />
+              <button type="button" className="remake-add-btn" onClick={addSkill}>추가</button>
+            </div>
+            
+            <div className="remake-skill-list">
+              {skills.map((skill, index) => (
+                <div key={index} className="remake-skill-chip">
+                  {skill}
+                  <button type="button" className="remake-skill-delete" onClick={() => removeSkill(skill)}>×</button>
+                </div>
+              ))}
             </div>
           </div>
           
@@ -406,12 +465,11 @@ function MainPage({setisLogin, account, setAccount}) {
         </div>
       </div>
       
-      <div id='main-rightside'>
+      <div id='main-rightside' className={leftsideChose === "채팅" || leftsideChose === "마이페이지" ? "onChat" : ""}>
         <div style={{ display: leftsideChose === "탐색" ? "block" : "none", width: "100%", height: "100%" }}>
           <SearchPage setLeftsideChose={setLeftsideChose} pjList={pjList} setClickedPj={setClickedPj} renderUserProfileImage={renderUserProfileImage} account={account}/>
         </div>
         
-        {/* 💡 수정 2: clickedPj 정보가 확실히 있을 때만 렌더링되게 하여 완전히 에러를 차단! */}
         <div style={{ display: leftsideChose === "프젝자세히" ? "block" : "none", width: "100%", height: "100%" }}>
           {clickedPj.pjtitle && 
             <ProjectMore clickedPj={clickedPj} setClickedPj={setClickedPj} updateProject={updateProject} setLeftsideChose={setLeftsideChose} account={account} renderUserProfileImage={renderUserProfileImage}/>
@@ -428,7 +486,7 @@ function MainPage({setisLogin, account, setAccount}) {
           <TeamRPage/>
         </div>
         <div style={{ display: leftsideChose === "마이페이지" ? "block" : "none", width: "100%", height: "100%" }}>
-          <MyPage/>
+          <MyPage account={account} setAccount={setAccount} />
         </div>
       </div>
     </div>
@@ -628,7 +686,7 @@ function PjcreatePage({setLeftsideChose, pjList, setPjList, account}) {
         </div>
 
         <div id='pj-skill_stack'>
-          <div><span>기술 스택</span><span id='pj-free'> · 자유입력</span></div>
+          <div><span>기술 스택</span><span className='pj-free'> · 자유입력</span></div>
           <div id='pj-skillBox'><input id='pj-skill_input' onChange={(e) => {setCurrentSkill(e.target.value);}} value={currentSkill}/><div id='pj-skill_add' onClick={()=>{SkillAdd()}}>추가</div></div>
 
           <div id='pg-added_skill'>
@@ -886,11 +944,117 @@ function PmReview() {
   )
 }
 
-function ChatPage() {
+function AfterPj() {
+
   return (
     <>
+    
     </>
   )
+}
+
+function ChatPage() {
+  // 예시: 채팅방 목록 데이터
+  const [chatRooms] = useState([
+    { id: 1, name: "김태오 · PM", message: "주 2회, 화·목 저녁에 비대면...", time: "방금", unread: false },
+    { id: 2, name: "급식앱 팀 채팅방", message: "진행 상황이 '진행중'으로 변경...", time: "2시간", unread: true },
+  ]);
+
+  const [activeRoomId, setActiveRoomId] = useState(1);
+
+  // 예시: 현재 선택된 방의 메시지 내역 (내가 보낸 건 isMe: true)
+  const [messages, setMessages] = useState([
+    { id: 1, sender: "김태오 · PM", text: "지원 전 커피챗이에요 · 부담 없이 물어보세요", isMe: false, type: "text" },
+    { id: 2, sender: "나", text: "안녕하세요! FE로 지원 생각 중인데 회의는 얼마나 자주 하나요?", isMe: true, type: "text" },
+    { id: 3, sender: "김태오 · PM", text: "주 2회, 화·목 저녁으로 비대면으로 해요. 부담 크지 않아요!", isMe: false, type: "text" },
+    { id: 4, sender: "system", text: "진행 상황이 '진행중'으로 변경됐어요", isMe: false, type: "system" },
+  ]);
+
+  const [inputText, setInputText] = useState("");
+
+  const handleSend = (e) => {
+    e.preventDefault();
+    if (!inputText.trim()) return;
+
+    // 메시지 추가 로직 (나중에 백엔드/웹소켓 연결 시 이 부분 수정)
+    setMessages([
+      ...messages,
+      { id: Date.now(), sender: "나", text: inputText, isMe: true, type: "text" }
+    ]);
+    setInputText("");
+  };
+
+  return (
+    <div id="chat-container">
+      {/* 1. 좌측 채팅방 목록 */}
+      <div id="chat-sidebar">
+        <h2>채팅</h2>
+        <div id="room-list">
+          {chatRooms.map((room) => (
+            <div 
+              key={room.id} 
+              className={`room-item ${activeRoomId === room.id ? "active" : ""}`}
+              onClick={() => setActiveRoomId(room.id)}
+            >
+              <div className="room-avatar">태</div>
+              <div className="room-info">
+                <div className="room-top">
+                  <span className="room-name">{room.name}</span>
+                  <span className="room-time">{room.time}</span>
+                </div>
+                <p className="room-preview">{room.message}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 2. 우측 대화창 영역 */}
+      <div id="chat-main">
+        {/* 우측 상단 헤더 */}
+        <div id="chat-header">
+          <div className="room-avatar">태</div>
+          <div className="chat-header-info">
+            <h3>김태오 · PM</h3>
+            <span><span className="status-dot"></span> 온라인 · 지원 전 커피챗</span>
+          </div>
+        </div>
+
+        {/* 메시지 스크롤 영역 */}
+        <div id="chat-messages">
+          {messages.map((msg) => {
+            if (msg.type === "system") {
+              return (
+                <div key={msg.id} className="message-system">
+                  <span>🔄 {msg.text}</span>
+                </div>
+              );
+            }
+            return (
+              <div key={msg.id} className={`message-row ${msg.isMe ? "me" : "other"}`}>
+                <div className="bubble">
+                  {msg.text}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* 하단 입력 및 템플릿 영역 */}
+        <div id="chat-bottom">
+          <form id="chat-input-box" onSubmit={handleSend}>
+            <input 
+              type="text" 
+              placeholder="메시지를 입력하세요…" 
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+            />
+            <button type="submit" id="send-btn">↑</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function TeamRPage() {
@@ -900,12 +1064,316 @@ function TeamRPage() {
   )
 }
 
-function MyPage() {
+function MyPage({ account, setAccount }) {
+  const [isEditing, setIsEditing] = useState(false);
+
+  // account 정보가 아직 로드되지 않았을 때의 예외 처리
+  if (!account) return null;
+
+  // isEditing 상태가 true면 수정 페이지(MyPageRemake)를 렌더링
+  if (isEditing) {
+    return (
+      <MyPageRemake 
+        account={account} 
+        setAccount={setAccount} 
+        setIsEditing={setIsEditing} 
+      />
+    );
+  }
+
+  // 이메일 앞부분을 아이디처럼 사용
+  const userId = account.email ? account.email.split('@')[0] : 'user';
+  
+  // 프로필 이미지가 없을 때 텍스트 아바타
+  const avatarText = account.name && account.name.length >= 3 
+    ? account.name.charAt(1) 
+    : (account.name ? account.name.charAt(0) : '👤');
+
   return (
-    <>
-    
-    </>
-  )
+    <div className="mypage-container">
+      {/* 상단 프로필 헤더 카드 */}
+      <div className="profile-header-card">
+        <div className="profile-info-section">
+          <div 
+            className="profile-avatar"
+            style={account.image ? { 
+              backgroundImage: `url(${account.image})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              color: 'transparent'
+            } : {
+              backgroundImage: `url(${basicProfile})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              color: 'transparent'
+            }}
+          >
+          </div>
+          
+          <div className="profile-details">
+            <div className="profile-name-row">
+              <h2>{account.name}</h2>
+              <span className="badge gender-badge">{account.gender}</span>
+            </div>
+            <div className="profile-sub-info">
+              <span>{account.number}</span>
+            </div>
+            <div className="badge major-badge">{account.jungong}</div>
+          </div>
+        </div>
+        <button className="edit-profile-btn" onClick={() => setIsEditing(true)}>프로필 수정</button>
+      </div>
+
+      {/* 자기소개 섹션 */}
+      <div className="profile-bio">
+        <p>{account.introduce || "작성된 자기소개가 없습니다."}</p>
+      </div>
+
+      <div className="mypage-grid">
+        <div className="grid-card github-card">
+          <div className="github-header">
+            <div className="github-title">
+              <div className="github-icon"></div>
+              <h3>GitHub 연동됨</h3>
+            </div>
+            <span className="badge connected-badge">Connected</span>
+          </div>
+          
+          <a href="#" className="github-link">
+            @{userId}-dev <span className="dot">·</span> 24 repos ↗
+          </a>
+          
+          <div className="language-stats">
+            <div className="lang-row">
+              <span className="lang-name">TypeScript</span>
+              <div className="progress-bar-bg">
+                <div className="progress-bar-fill" style={{ width: '75%' }}></div>
+              </div>
+            </div>
+            <div className="lang-row">
+              <span className="lang-name">Dart</span>
+              <div className="progress-bar-bg">
+                <div className="progress-bar-fill" style={{ width: '45%' }}></div>
+              </div>
+            </div>
+            <div className="lang-row">
+              <span className="lang-name">Python</span>
+              <div className="progress-bar-bg">
+                <div className="progress-bar-fill" style={{ width: '25%' }}></div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="github-footer">
+            <span className="footer-info">저장소 6개 연동 중</span>
+            <button className="disconnect-btn">연동 해지</button>
+          </div>
+        </div>
+
+        <div className="right-cards-column">
+          <div className="grid-card stats-card">
+            <div className="stat-item">
+              <span className="stat-num text-green">1</span>
+              <span className="stat-label">진행중</span>
+            </div>
+            <div className="stat-divider"></div>
+            <div className="stat-item">
+              <span className="stat-num text-black">2</span>
+              <span className="stat-label">완료</span>
+            </div>
+          </div>
+
+          <div className="grid-card action-card">
+            <div className="action-info">
+              <h4>받은 피드백 보기 <span className="star-rating">⭐ 4.8</span></h4>
+              <p>완료 프로젝트에서 12개</p>
+            </div>
+            <span className="arrow-icon">›</span>
+          </div>
+
+          <div className="grid-card action-card">
+            <div className="action-info">
+              <h4>알림 설정</h4>
+              <p>전공 · 키워드 필터 알림</p>
+            </div>
+            <span className="arrow-icon">›</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+function MyPageRemake({ account, setAccount, setIsEditing }) {
+  // 로컬 상태 관리
+  const [intro, setIntro] = useState(account.introduce || "");
+  const [gender, setGender] = useState(account.gender || "남"); // 기타 제거
+  
+  // 전공 단일 선택
+  const [jungongSelect, setJungongSelect] = useState(account.jungong || "FE");
+
+  // 관심 기술 스택 (계정에 skills 배열이 있으면 불러오고, 없으면 빈 배열)
+  const [skills, setSkills] = useState(account.skills || []);
+  const [currentSkill, setCurrentSkill] = useState("");
+
+  const userId = account.email ? account.email.split('@')[0] : 'user';
+  const avatarText = account.name && account.name.length >= 3 
+    ? account.name.charAt(1) 
+    : (account.name ? account.name.charAt(0) : '👤');
+
+  const allJungongs = ['FE', 'BE', 'EM(FW)', 'EM(HW)', 'Flutter', 'android', 'iOS', 'UI/UX', 'Game', 'security', 'AI'];
+  const genders = ['남', '여']; // 기타 제거
+
+  // 저장 로직 (이때 setAccount가 정상 작동하려면 MainPage에서 props로 내려줘야 함)
+  const handleSave = () => {
+    if (typeof setAccount === 'function') {
+      setAccount({
+        ...account,
+        introduce: intro,
+        gender: gender,
+        jungong: jungongSelect, // 단일 전공 저장
+        skills: skills // 기술 스택 저장
+      });
+      setIsEditing(false);
+    } else {
+      console.error("setAccount가 함수가 아닙니다. MainPage에서 props를 확인해주세요.");
+    }
+  };
+
+  // 기술 스택 추가
+  const addSkill = (e) => {
+    if (e) e.preventDefault();
+    if (currentSkill.trim() !== "" && !skills.includes(currentSkill.trim())) {
+      setSkills([...skills, currentSkill.trim()]);
+      setCurrentSkill("");
+    }
+  };
+
+  // 스택 엔터키 입력 처리
+  const handleSkillKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addSkill();
+    }
+  };
+
+  // 기술 스택 삭제
+  const removeSkill = (skillToRemove) => {
+    setSkills(skills.filter(skill => skill !== skillToRemove));
+  };
+
+  return (
+    <div className="remake-container">
+      {/* 1. 상단 프로필 헤더 카드 */}
+      <div className="remake-card">
+        <div className="remake-header-inner">
+          <div className="remake-profile-left">
+            <div 
+              className="remake-avatar"
+              style={account.image ? { 
+                backgroundImage: `url(${account.image})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                color: 'transparent'
+              } : {}}
+            >
+              {!account.image && avatarText}
+            </div>
+            
+            <div className="remake-profile-details">
+              <div className="remake-name-row">
+                <h2>{userId}</h2>
+                <span className="remake-badge-gray">{gender}</span>
+              </div>
+              <div className="remake-sub-info">
+                <span>{account.number} · {account.name}</span>
+              </div>
+              <div className="remake-majors-display">
+                 {/* 단일 전공 배지 표시 */}
+                 <span className="remake-badge-blue">{jungongSelect}</span>
+              </div>
+            </div>
+          </div>
+          <button className="remake-save-btn" onClick={handleSave}>완료</button>
+        </div>
+      </div>
+
+      {/* 2. 하단 정보 수정 폼 카드 */}
+      <div className="remake-card remake-form-card">
+        
+        {/* 한 줄 소개 */}
+        <div className="remake-form-group">
+          <label>한 줄 소개 <span>{intro.length}/100</span></label>
+          <textarea 
+            className="remake-textarea"
+            maxLength={100}
+            value={intro}
+            onChange={(e) => setIntro(e.target.value)}
+            placeholder="자기소개를 입력해주세요."
+          />
+        </div>
+
+        {/* 성별 */}
+        <div className="remake-form-group">
+          <label>성별</label>
+          <div className="remake-btn-group">
+            {genders.map((g) => (
+              <button 
+                key={g} 
+                className={`remake-toggle-btn ${gender === g ? 'active' : ''}`}
+                onClick={() => setGender(g)}
+              >
+                {g}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 전공 (단일 선택) */}
+        <div className="remake-form-group">
+          <label>전공 <span>· 1개</span></label>
+          <div className="remake-tag-group">
+            {allJungongs.map((major) => (
+              <button 
+                key={major} 
+                className={`remake-tag-btn ${jungongSelect === major ? 'active' : ''}`}
+                onClick={() => setJungongSelect(major)}
+              >
+                {major}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 관심 기술 스택 */}
+        <div className="remake-form-group">
+          <label>관심 기술 스택 <span>· 자유 입력</span></label>
+          <div className="remake-skill-input-row">
+            <input 
+              type="text" 
+              className="remake-input"
+              placeholder="기술을 입력하고 Enter (예: Next.js)"
+              value={currentSkill}
+              onChange={(e) => setCurrentSkill(e.target.value)}
+              onKeyDown={handleSkillKeyDown}
+            />
+            <button className="remake-add-btn" onClick={addSkill}>추가</button>
+          </div>
+          
+          <div className="remake-skill-list">
+            {skills.map((skill, index) => (
+              <div key={index} className="remake-skill-chip">
+                {skill}
+                <button className="remake-skill-delete" onClick={() => removeSkill(skill)}>×</button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
 }
 
 function App() {
