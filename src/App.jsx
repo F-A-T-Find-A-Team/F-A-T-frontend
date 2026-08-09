@@ -486,7 +486,7 @@ function MainPage({setisLogin, account, setAccount}) {
           <TeamRPage/>
         </div>
         <div style={{ display: leftsideChose === "마이페이지" ? "block" : "none", width: "100%", height: "100%" }}>
-          <MyPage account={account} setAccount={setAccount} />
+          <MyPage account={account} setAccount={setAccount} pjList={pjList} />
         </div>
       </div>
     </div>
@@ -725,6 +725,9 @@ function PjcreatePage({setLeftsideChose, pjList, setPjList, account}) {
 
 function ProjectMore({clickedPj, setClickedPj, updateProject, setLeftsideChose, account, renderUserProfileImage}) {
   
+  // 🌟 피드백 모달창 상태 관리
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+
   function ProgressClick(value) {
     if (account.email !== clickedPj.pjPerson?.[0]?.email) {
       alert("PM만 변경할 수 있어요.");
@@ -741,7 +744,6 @@ function ProjectMore({clickedPj, setClickedPj, updateProject, setLeftsideChose, 
 
   const getDDay = (deadlineStr, isDone) => {
     if (isDone) return "마감됨";
-
     if (!deadlineStr) return "무기한";
     
     const today = new Date();
@@ -788,7 +790,6 @@ function ProjectMore({clickedPj, setClickedPj, updateProject, setLeftsideChose, 
     };
 
   const PjMemberAdd = (newMember) => {
-
     const isAlreadyMember = clickedPj.pjPerson?.some(
       (person) => person.email === newMember.email
     );
@@ -826,7 +827,6 @@ function ProjectMore({clickedPj, setClickedPj, updateProject, setLeftsideChose, 
           <span>진행 단계</span>
 
           <div id='more-progress'>
-
             <div id='progress-idea' className={`${clickedPj.pjprogress >= 1 ? "active" : ""} ${clickedPj.pjprogress === 1 ? "cactive" : ""}`}>
               <div onClick={()=>{ProgressClick(1)}}>1</div>
               <span>아이디어</span>
@@ -846,16 +846,12 @@ function ProjectMore({clickedPj, setClickedPj, updateProject, setLeftsideChose, 
               <span>완성</span>
             </div>
           </div>
-
           <span id='more-inform'>단계를 누르면 상태가 바뀌어요. <span>완성</span>으로 바꾸면 레주메북 연동·피드백 창이 자동으로 떠요.</span>
         </div>
 
         <div className='more-contentsBox'>
           <span>상세 내용</span>
-          <span id='more-contents'>
-            {clickedPj.pjcontents}
-          </span>
-
+          <span id='more-contents'>{clickedPj.pjcontents}</span>
         </div>
 
         <div className='more-contentsBox'>
@@ -898,50 +894,170 @@ function ProjectMore({clickedPj, setClickedPj, updateProject, setLeftsideChose, 
               ))}
             </div>
 
-            <button id='mright-submit' onClick={()=> {
-              PjMemberAdd(account)
-            }}>지원하기</button>
+            <button id='mright-submit' onClick={()=> {PjMemberAdd(account)}}>지원하기</button>
             <button id='mright-pmExcuse'>PM에게 문의하기</button>
           </div>
 
             <div id='mright-bottom'>
-              {clickedPj.pjPerson && account.email === clickedPj.pjPerson?.[0]?.email ? <PmButtonSelect ProgressClick={ProgressClick} clickedPj={clickedPj}/> : ""}
+              {/* 🌟 모달창 오픈 함수를 하위 컴포넌트로 전달합니다 */}
+              {clickedPj.pjPerson && account.email === clickedPj.pjPerson?.[0]?.email ? 
+                <PmButtonSelect 
+                  ProgressClick={ProgressClick} 
+                  clickedPj={clickedPj} 
+                  setIsFeedbackModalOpen={setIsFeedbackModalOpen}
+                /> : ""}
             </div>
         </div>
       </div>
+
+      {/* 🌟 피드백 모달 컴포넌트 마운트 */}
+      {isFeedbackModalOpen && (
+        <FeedbackModal 
+          clickedPj={clickedPj} 
+          onClose={() => setIsFeedbackModalOpen(false)} 
+          updateProject={updateProject}
+        />
+      )}
     </div>
   )
 }
 
-function PmButtonSelect({clickedPj, ProgressClick}) {
-
+function PmButtonSelect({clickedPj, ProgressClick, setIsFeedbackModalOpen}) {
   return (
     <>
-      {clickedPj.pjdone === true ? <PmReview/> : <PmExcuseButton ProgressClick={ProgressClick}/>}
+      {clickedPj.pjdone === true ? 
+        <PmReview setIsFeedbackModalOpen={setIsFeedbackModalOpen}/> : 
+        <PmExcuseButton ProgressClick={ProgressClick}/>}
     </>
   )
 }
 
 function PmExcuseButton({ProgressClick}) {
-  
   return (
     <div id='excuse-box'>
       <span id='excuse-span'>PM 전용</span>
-      <button 
-      onClick={()=>{ProgressClick(3)}}>&#10003; 프로젝트 완료하기</button>
+      <button onClick={()=>{ProgressClick(3)}}>&#10003; 프로젝트 완료하기</button>
     </div>
   )
 }
 
-function PmReview() {
-
+function PmReview({setIsFeedbackModalOpen}) {
   return (
     <div id='review-box'>
       <span id='excuse-span'>PM 전용</span>
-      <button 
-      onClick={()=>{ProgressClick(3)}}>&#9733; 팀원 피드백 작성</button>
+      {/* 🌟 ProgressClick(3) 대신 모달창 열기 함수로 교체 */}
+      <button onClick={()=>{setIsFeedbackModalOpen(true)}}>&#9733; 팀원 피드백 작성</button>
     </div>
   )
+}
+
+// 🌟 새롭게 추가하는 컴포넌트
+function FeedbackModal({ clickedPj, onClose, updateProject }) {
+  // 팀원별 피드백 데이터를 객체 형태로 저장 (기존 작성 내역이 있으면 불러옴)
+  const [feedbacks, setFeedbacks] = useState(() => {
+    return clickedPj.feedbacks || {};
+  });
+
+  const handleRatingChange = (email, rating) => {
+    setFeedbacks(prev => ({
+      ...prev,
+      [email]: { ...(prev[email] || {}), rating }
+    }));
+  };
+
+  const handleCommentChange = (email, comment) => {
+    setFeedbacks(prev => ({
+      ...prev,
+      [email]: { ...(prev[email] || {}), comment }
+    }));
+  };
+
+  const handleSubmit = () => {
+    // 기존 프로젝트 정보에 feedbacks 객체 저장
+    const updatedPj = {
+      ...clickedPj,
+      feedbacks: feedbacks
+    };
+    updateProject(updatedPj);
+    alert("피드백이 성공적으로 저장되었습니다!");
+    onClose();
+  };
+
+  return (
+    <div className="feedback-modal-overlay">
+      <div className="feedback-modal-content">
+        <div className="feedback-modal-header">
+          <div className="feedback-header-title">
+            <h3>팀원 피드백</h3>
+            <p>함께한 팀원에게 별점과 한 줄 피드백을 남겨주세요.</p>
+          </div>
+          <button className="feedback-close-btn" onClick={onClose}>×</button>
+        </div>
+        
+        <div className="feedback-modal-body">
+          {clickedPj.pjPerson && clickedPj.pjPerson.map((member, idx) => {
+            const isPM = idx === 0;
+            // PM이면 "PM · FE" 같은 형태, 아니면 전공만 표시
+            const displayRole = isPM 
+              ? `PM${member.jungong ? ` · ${member.jungong}` : ''}` 
+              : (member.jungong || '팀원');
+              
+            const memberFeedback = feedbacks[member.email] || { rating: 0, comment: '' };
+            
+            // 🌟 프로필 이미지 스타일 설정 (이미지가 없으면 basicProfile 적용)
+            const profileStyle = member.image
+              ? { 
+                  backgroundImage: `url(${member.image})`, 
+                  backgroundSize: 'cover', 
+                  backgroundPosition: 'center' 
+                }
+              : { 
+                  backgroundImage: `url(${basicProfile})`, 
+                  backgroundSize: 'cover', 
+                  backgroundPosition: 'center' 
+                };
+            
+            return (
+              <div key={member.email} className="feedback-member-card">
+                <div className="feedback-member-info">
+                  {/* 🌟 기존 텍스트 대신 style 속성으로 배경 이미지를 렌더링합니다 */}
+                  <div className="feedback-avatar" style={profileStyle}></div>
+                  <div className="feedback-details">
+                    <span className="feedback-name">{member.name}</span>
+                    <span className="feedback-role">{displayRole}</span>
+                  </div>
+                </div>
+                
+                <div className="feedback-stars">
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <span 
+                      key={star} 
+                      className={`star ${memberFeedback.rating >= star ? 'filled' : ''}`}
+                      onClick={() => handleRatingChange(member.email, star)}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
+                
+                <input 
+                  type="text" 
+                  className="feedback-input" 
+                  placeholder="예: 커뮤니케이션이 정확하고 마감을 잘 지켰어요"
+                  value={memberFeedback.comment || ''} /* 🌟 || '' 추가: undefined 방지 */
+                  onChange={(e) => handleCommentChange(member.email, e.target.value)}
+                />
+              </div>
+            )
+          })}
+        </div>
+        
+        <div className="feedback-modal-footer">
+          <button className="feedback-submit-btn" onClick={handleSubmit}>피드백 제출하기</button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function AfterPj() {
@@ -1064,8 +1180,11 @@ function TeamRPage() {
   )
 }
 
-function MyPage({ account, setAccount }) {
+// 파라미터에 pjList 추가
+function MyPage({ account, setAccount, pjList = [] }) {
   const [isEditing, setIsEditing] = useState(false);
+  // 🌟 피드백 모달 상태
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
 
   // account 정보가 아직 로드되지 않았을 때의 예외 처리
   if (!account) return null;
@@ -1081,6 +1200,24 @@ function MyPage({ account, setAccount }) {
     );
   }
 
+  // 🌟 내 계정(email)으로 받은 피드백 데이터 수집
+  const myFeedbacks = [];
+  pjList.forEach(pj => {
+    if (pj.feedbacks && pj.feedbacks[account.email]) {
+      myFeedbacks.push({
+        pjTitle: pj.pjtitle,
+        rating: pj.feedbacks[account.email].rating,
+        comment: pj.feedbacks[account.email].comment
+      });
+    }
+  });
+
+  // 🌟 총 받은 피드백 개수 및 평균 별점 계산
+  const totalFeedbacks = myFeedbacks.length;
+  const avgRating = totalFeedbacks > 0 
+    ? (myFeedbacks.reduce((sum, fb) => sum + fb.rating, 0) / totalFeedbacks).toFixed(1) 
+    : 0;
+
   // 이메일 앞부분을 아이디처럼 사용
   const userId = account.email ? account.email.split('@')[0] : 'user';
   
@@ -1091,7 +1228,7 @@ function MyPage({ account, setAccount }) {
 
   return (
     <div className="mypage-container">
-      {/* 상단 프로필 헤더 카드 */}
+      {/* 🟢 복구됨: 상단 프로필 헤더 카드 */}
       <div className="profile-header-card">
         <div className="profile-info-section">
           <div 
@@ -1130,6 +1267,7 @@ function MyPage({ account, setAccount }) {
       </div>
 
       <div className="mypage-grid">
+        {/* 🟢 복구됨: 깃허브 연동 카드 */}
         <div className="grid-card github-card">
           <div className="github-header">
             <div className="github-title">
@@ -1171,6 +1309,7 @@ function MyPage({ account, setAccount }) {
         </div>
 
         <div className="right-cards-column">
+          {/* 🟢 복구됨: 통계 카드 */}
           <div className="grid-card stats-card">
             <div className="stat-item">
               <span className="stat-num text-green">1</span>
@@ -1183,27 +1322,74 @@ function MyPage({ account, setAccount }) {
             </div>
           </div>
 
-          <div className="grid-card action-card">
+          {/* 🌟 수정된 부분: 받은 피드백 보기 카드 */}
+          <div 
+            className="grid-card action-card" 
+            onClick={() => setIsFeedbackModalOpen(true)} 
+            style={{ cursor: 'pointer' }}
+          >
             <div className="action-info">
-              <h4>받은 피드백 보기 <span className="star-rating">⭐ 4.8</span></h4>
-              <p>완료 프로젝트에서 12개</p>
-            </div>
-            <span className="arrow-icon">›</span>
-          </div>
-
-          <div className="grid-card action-card">
-            <div className="action-info">
-              <h4>알림 설정</h4>
-              <p>전공 · 키워드 필터 알림</p>
+              <h4>받은 피드백 보기 <span className="star-rating">⭐ {avgRating > 0 ? avgRating : "0.0"}</span></h4>
+              <p>완료 프로젝트에서 {totalFeedbacks}개</p>
             </div>
             <span className="arrow-icon">›</span>
           </div>
         </div>
       </div>
+
+      {/* 🌟 피드백 모달창 렌더링 */}
+      {isFeedbackModalOpen && (
+        <MyFeedbackModal 
+          myFeedbacks={myFeedbacks} 
+          onClose={() => setIsFeedbackModalOpen(false)} 
+        />
+      )}
     </div>
   );
 }
 
+// 🌟 내가 받은 피드백을 보여주는 모달 컴포넌트
+function MyFeedbackModal({ myFeedbacks, onClose }) {
+  return (
+    <div className="feedback-modal-overlay">
+      <div className="feedback-modal-content">
+        <div className="feedback-modal-header">
+          <div className="feedback-header-title">
+            <h3>받은 피드백 내역</h3>
+            <p>함께한 팀원들이 남겨준 소중한 피드백이에요.</p>
+          </div>
+          <button className="feedback-close-btn" onClick={onClose}>×</button>
+        </div>
+        
+        <div className="feedback-modal-body" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+          {myFeedbacks.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px 20px', color: '#adb5bd' }}>
+              아직 받은 피드백이 없습니다. <br/>프로젝트를 완료하고 피드백을 받아보세요!
+            </div>
+          ) : (
+            myFeedbacks.map((fb, idx) => (
+              <div key={idx} className="feedback-member-card" style={{ display: 'flex', flexDirection: 'column', padding: '16px', gap: '12px', alignItems: 'flex-start' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                  <span style={{ fontWeight: '600', fontSize: '15px', color: '#212529' }}>{fb.pjTitle}</span>
+                  <div className="feedback-stars" style={{ gap: '2px' }}>
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <span key={star} className={`star ${fb.rating >= star ? 'filled' : ''}`} style={{ cursor: 'default' }}>
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ width: '100%', backgroundColor: '#f8f9fa', padding: '14px', borderRadius: '8px', fontSize: '14px', color: '#495057', boxSizing: 'border-box' }}>
+                  {fb.comment || "작성된 코멘트가 없습니다."}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function MyPageRemake({ account, setAccount, setIsEditing }) {
   // 로컬 상태 관리
@@ -1276,7 +1462,12 @@ function MyPageRemake({ account, setAccount, setIsEditing }) {
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 color: 'transparent'
-              } : {}}
+              } : {
+                backgroundImage: `url(${basicProfile})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                color: 'transparent'
+              }}
             >
               {!account.image && avatarText}
             </div>

@@ -1167,3 +1167,195 @@
   border-radius: 14px;
   cursor: pointer;
 }
+
+/* 피드백 */
+
+/* 🌟 팀원 피드백 모달창 CSS */
+.feedback-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.feedback-modal-content {
+  background: white;
+  width: 460px;
+  max-height: 85vh;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.feedback-modal-header {
+  padding: 30px 30px 20px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.feedback-header-title h3 {
+  margin: 0 0 6px 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #212529;
+}
+
+.feedback-header-title p {
+  margin: 0;
+  font-size: 13px;
+  color: #868e96;
+}
+
+.feedback-close-btn {
+  background: none;
+  border: 1px solid #e9ecef;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  color: #adb5bd;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.feedback-close-btn:hover {
+  background: #f8f9fa;
+  color: #495057;
+}
+
+.feedback-modal-body {
+  padding: 0 30px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+/* 스크롤바 커스텀 */
+.feedback-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+.feedback-modal-body::-webkit-scrollbar-thumb {
+  background: #dee2e6;
+  border-radius: 4px;
+}
+
+.feedback-member-card {
+  border: 1px solid #f1f3f5;
+  border-radius: 16px;
+  padding: 20px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.feedback-member-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.feedback-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid #e9ecef;
+  background: #f8f9fa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #495057;
+  margin-right: 12px;
+}
+
+.feedback-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.feedback-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #212529;
+}
+
+.feedback-role {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 11px;
+  color: #00c471;
+  background: #e6f9f0;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.feedback-stars {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.feedback-stars .star {
+  font-size: 26px;
+  color: #f1f3f5;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.feedback-stars .star:hover,
+.feedback-stars .star.filled {
+  color: #00c471;
+}
+
+.feedback-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #f1f3f5;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #495057;
+  box-sizing: border-box;
+  outline: none;
+  transition: 0.2s;
+}
+
+.feedback-input::placeholder {
+  color: #adb5bd;
+}
+
+.feedback-input:focus {
+  border-color: #00c471;
+}
+
+.feedback-modal-footer {
+  padding: 24px 30px 30px 30px;
+}
+
+.feedback-submit-btn {
+  width: 100%;
+  padding: 16px;
+  background: #20E398;
+  color: #000;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.feedback-submit-btn:hover {
+  background: #1bd38d;
+}
