@@ -1,13 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Jua&family=Montenegrin+Gothic+One&display=swap');
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-#fucking_body {
+#body {
   min-height: 100vh;
   width: 100%;
 }
-#fucking_body.bg-login {
+#body.bg-login {
   background-image: linear-gradient(90deg, #21f1a8 44%, white 40%);
 }
 #Login_box {
@@ -319,7 +321,7 @@
   box-sizing: border-box;
   background-color: white;
 }
-#main-leftside button {
+#main-leftside a {
   width: 34vh;
   height: 54.4px;
   background-color: white;
@@ -331,18 +333,20 @@
   font-weight: 600;
   cursor : pointer;
   transition-duration: 0.14s;
+  color: inherit;
+  text-decoration: none;
 }
-#main-leftside button:hover {
+#main-leftside a:hover {
   background-color: rgba(224, 224, 224, 0.525);
 }
-#main-leftside button.active {
+#main-leftside a.active {
   background-color: #dbfdf1;
   color: #21f1a8;
 }
-#main-leftside button.active div {
+#main-leftside a.active div {
   background-color: #21f1a8;
 }
-#main-leftside button div {
+#main-leftside a div {
   width: 1.24vh;
   height: 1.24vh;
   background-color: gray;
@@ -597,14 +601,13 @@
   cursor: pointer;
   font-weight: 600;
 }
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Jua&family=Montenegrin+Gothic+One&display=swap');
 #pj-day > input {
   height: 44px;
   border-radius: 9.4px;
   border: 1px solid rgba(181, 181, 181, 0.423);
   padding: 0px 14px;
   font-size: 15.4px;
-  font-weight: 600;
+  font-weight: 200;
   margin-top: 8.4px;
   font-family: "Jua", sans-serif;
 }
@@ -668,6 +671,8 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  color: inherit;
+  text-decoration: none;
 }
 #pj-submit {
   background-color: #21f1a8;
@@ -682,6 +687,8 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  color: inherit;
+  text-decoration: none;
 }
 #search-pjList {
   margin-top: 20.4px;
