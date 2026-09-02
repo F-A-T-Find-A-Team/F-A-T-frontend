@@ -1,10 +1,31 @@
 import { useState } from 'react';
 import basicProfile from '../assets/snake.webp';
 
-function SearchPage({setLeftsideChose, pjList, setClickedPj, renderUserProfileImage, account}) {
+function SearchPage({
+  leftsideChose,
+  setLeftsideChose,
+  pjList,
+  setClickedPj,
+  clickedPj,
+  updateProject,
+  renderUserProfileImage,
+  account
+}) {
   
   const [currentSearch, setCurrentSearch] = useState("전체");
 
+  if (leftsideChose === '프젝자세히' && clickedPj?.pjtitle) {
+    return (
+      <ProjectMore
+        clickedPj={clickedPj}
+        setClickedPj={setClickedPj}
+        updateProject={updateProject}
+        setLeftsideChose={setLeftsideChose}
+        account={account}
+        renderUserProfileImage={renderUserProfileImage}
+      />
+    );
+  }
 
   const getDDay = (deadlineStr, isDone) => {
     if (isDone) return "마감됨";

@@ -405,6 +405,94 @@
 #main-rightside.onChat {
   padding: 0px !important;
 }
+#global-theme-toggle {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 50;
+  border: 1px solid rgba(181, 181, 181, 0.423);
+  background: rgba(255, 255, 255, 0.85);
+  color: #111827;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+#body[data-theme='dark'] #global-theme-toggle {
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  border-color: rgba(148, 163, 184, 0.5);
+}
+#body[data-theme='dark'] {
+  background-color: #0f172a;
+  color: #e5e7eb;
+}
+#body[data-theme='dark'] #main-leftside,
+#body[data-theme='dark'] #main-rightside,
+#body[data-theme='dark'] #search-pjList > div,
+#body[data-theme='dark'] #project-header,
+#body[data-theme='dark'] #more-box,
+#body[data-theme='dark'] #more-rightBox,
+#body[data-theme='dark'] #mright-box,
+#body[data-theme='dark'] #feedback-modal-content,
+#body[data-theme='dark'] .feedback-modal-content,
+#body[data-theme='dark'] .grid-card,
+#body[data-theme='dark'] .profile-header-card,
+#body[data-theme='dark'] .remake-card {
+  background-color: #111827;
+  color: #e5e7eb;
+}
+#body[data-theme='dark'] #main-leftside {
+  border-right-color: rgba(148, 163, 184, 0.3);
+}
+#body[data-theme='dark'] #main-rightside {
+  background-color: #0b1220;
+}
+#body[data-theme='dark'] #search-pjList > div,
+#body[data-theme='dark'] .grid-card,
+#body[data-theme='dark'] .profile-header-card,
+#body[data-theme='dark'] .remake-card,
+#body[data-theme='dark'] #more-rightBox,
+#body[data-theme='dark'] #mright-box,
+#body[data-theme='dark'] .feedback-member-card {
+  border-color: rgba(148, 163, 184, 0.25);
+}
+#body[data-theme='dark'] #main-userProfile,
+#body[data-theme='dark'] .remake-skill-chip,
+#body[data-theme='dark'] .feedback-input,
+#body[data-theme='dark'] .feedback-modal-body {
+  background-color: #1f2937;
+  color: #e5e7eb;
+}
+#body[data-theme='dark'] #search-allButton,
+#body[data-theme='dark'] #pj-cancel,
+#body[data-theme='dark'] #pj-submit,
+#body[data-theme='dark'] .remake-add-btn,
+#body[data-theme='dark'] .remake-toggle-btn,
+#body[data-theme='dark'] .remake-tag-btn {
+  color: #e5e7eb;
+}
+#body[data-theme='dark'] #search-allButton.active,
+#body[data-theme='dark'] #pj-submit,
+#body[data-theme='dark'] .remake-toggle-btn.active,
+#body[data-theme='dark'] .remake-tag-btn.active {
+  background-color: #21f1a8;
+  color: #0f172a;
+}
+#body[data-theme='dark'] a,
+#body[data-theme='dark'] button,
+#body[data-theme='dark'] input,
+#body[data-theme='dark'] textarea,
+#body[data-theme='dark'] span,
+#body[data-theme='dark'] p,
+#body[data-theme='dark'] h1,
+#body[data-theme='dark'] h2,
+#body[data-theme='dark'] h3,
+#body[data-theme='dark'] h4,
+#body[data-theme='dark'] div {
+  color: inherit;
+}
 #main-rightside h2 {
   font-weight: 1000;
   font-size: 28.4px;

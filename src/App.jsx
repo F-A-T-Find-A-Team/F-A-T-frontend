@@ -23,6 +23,7 @@ function App() {
     skills: ['sold the world', 'stealth']
   })
   const [isLogin, setIsLogin] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(false)
   const [leftsideChose, setLeftsideChose] = useState('탐색')
   const [pjList, setPjList] = useState([])
   const [clickedPj, setClickedPj] = useState({ pjPerson: [] })
@@ -71,7 +72,15 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="bg-main" id="body">
+      <div className="bg-main" id="body" data-theme={isDarkMode ? 'dark' : 'light'}>
+        <button
+          id="global-theme-toggle"
+          type="button"
+          onClick={() => setIsDarkMode((prev) => !prev)}
+        >
+          {isDarkMode ? '라이트 모드' : '다크 모드'}
+        </button>
+
         <Routes>
           <Route
             path="/"
@@ -90,8 +99,8 @@ function App() {
               />
             }
           >
-            <Route index element={<SearchPage setLeftsideChose={setLeftsideChose} pjList={pjList} setClickedPj={setClickedPj} renderUserProfileImage={renderUserProfileImage} account={account} />} />
-            <Route path="search" element={<SearchPage setLeftsideChose={setLeftsideChose} pjList={pjList} setClickedPj={setClickedPj} renderUserProfileImage={renderUserProfileImage} account={account} />} />
+            <Route index element={<SearchPage leftsideChose={leftsideChose} setLeftsideChose={setLeftsideChose} pjList={pjList} setClickedPj={setClickedPj} clickedPj={clickedPj} updateProject={updateProject} renderUserProfileImage={renderUserProfileImage} account={account} />} />
+            <Route path="search" element={<SearchPage leftsideChose={leftsideChose} setLeftsideChose={setLeftsideChose} pjList={pjList} setClickedPj={setClickedPj} clickedPj={clickedPj} updateProject={updateProject} renderUserProfileImage={renderUserProfileImage} account={account} />} />
             <Route path="create" element={<PjcreatePage setLeftsideChose={setLeftsideChose} pjList={pjList} setPjList={setPjList} account={account} />} />
             <Route path="chat" element={<ChatPage />} />
             <Route path="team" element={<TeamPage />} />
