@@ -73,13 +73,6 @@ function App() {
   return (
     <BrowserRouter>
       <div className="bg-main" id="body" data-theme={isDarkMode ? 'dark' : 'light'}>
-        <button
-          id="global-theme-toggle"
-          type="button"
-          onClick={() => setIsDarkMode((prev) => !prev)}
-        >
-          {isDarkMode ? '라이트 모드' : '다크 모드'}
-        </button>
 
         <Routes>
           <Route

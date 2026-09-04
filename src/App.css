@@ -407,13 +407,13 @@
 }
 #global-theme-toggle {
   position: fixed;
-  top: 18px;
-  right: 18px;
+  top: 4px;
+  right: 24px;
   z-index: 50;
   border: 1px solid rgba(181, 181, 181, 0.423);
   background: rgba(255, 255, 255, 0.85);
   color: #111827;
-  border-radius: 999px;
+  border-radius: 14px;
   padding: 8px 14px;
   font-size: 12px;
   font-weight: 700;
@@ -429,6 +429,7 @@
   color: #e5e7eb;
 }
 #body[data-theme='dark'] #main-leftside,
+#body[data-theme='dark'] #main-leftside a,
 #body[data-theme='dark'] #main-rightside,
 #body[data-theme='dark'] #search-pjList > div,
 #body[data-theme='dark'] #project-header,

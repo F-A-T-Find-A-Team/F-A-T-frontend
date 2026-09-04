@@ -3,7 +3,6 @@ import basicProfile from '../assets/snake.webp'
 
 function MyPage({ account, setAccount, pjList = [] }) {
   const [isEditing, setIsEditing] = useState(false);
-  // 🌟 피드백 모달 상태
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
 
   // account 정보가 아직 로드되지 않았을 때의 예외 처리
@@ -20,7 +19,6 @@ function MyPage({ account, setAccount, pjList = [] }) {
     );
   }
 
-  // 🌟 내 계정(email)으로 받은 피드백 데이터 수집
   const myFeedbacks = [];
   pjList.forEach(pj => {
     if (pj.feedbacks && pj.feedbacks[account.email]) {
@@ -32,7 +30,6 @@ function MyPage({ account, setAccount, pjList = [] }) {
     }
   });
 
-  // 🌟 총 받은 피드백 개수 및 평균 별점 계산
   const totalFeedbacks = myFeedbacks.length;
   const avgRating = totalFeedbacks > 0 
     ? (myFeedbacks.reduce((sum, fb) => sum + fb.rating, 0) / totalFeedbacks).toFixed(1) 
@@ -48,7 +45,6 @@ function MyPage({ account, setAccount, pjList = [] }) {
 
   return (
     <div className="mypage-container">
-      {/* 🟢 복구됨: 상단 프로필 헤더 카드 */}
       <div className="profile-header-card">
         <div className="profile-info-section">
           <div 
@@ -81,13 +77,11 @@ function MyPage({ account, setAccount, pjList = [] }) {
         <button className="edit-profile-btn" onClick={() => setIsEditing(true)}>프로필 수정</button>
       </div>
 
-      {/* 자기소개 섹션 */}
       <div className="profile-bio">
         <p>{account.introduce || "작성된 자기소개가 없습니다."}</p>
       </div>
 
       <div className="mypage-grid">
-        {/* 🟢 복구됨: 깃허브 연동 카드 */}
         <div className="grid-card github-card">
           <div className="github-header">
             <div className="github-title">
@@ -129,7 +123,6 @@ function MyPage({ account, setAccount, pjList = [] }) {
         </div>
 
         <div className="right-cards-column">
-          {/* 🟢 복구됨: 통계 카드 */}
           <div className="grid-card stats-card">
             <div className="stat-item">
               <span className="stat-num text-green">1</span>
@@ -142,7 +135,6 @@ function MyPage({ account, setAccount, pjList = [] }) {
             </div>
           </div>
 
-          {/* 🌟 수정된 부분: 받은 피드백 보기 카드 */}
           <div 
             className="grid-card action-card" 
             onClick={() => setIsFeedbackModalOpen(true)} 
@@ -157,7 +149,6 @@ function MyPage({ account, setAccount, pjList = [] }) {
         </div>
       </div>
 
-      {/* 🌟 피드백 모달창 렌더링 */}
       {isFeedbackModalOpen && (
         <MyFeedbackModal 
           myFeedbacks={myFeedbacks} 
