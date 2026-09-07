@@ -9,7 +9,6 @@ import LoginPage from './pages/LoginPage.jsx'
 import SearchPage from './pages/SearchPage.jsx'
 import PjcreatePage from './pages/PjcreatePage.jsx'
 import ChatPage from './pages/ChatPage.jsx'
-import TeamPage from './pages/TeamPage.jsx'
 import MyPage from './pages/MyPage.jsx'
 
 function App() {
@@ -96,7 +95,6 @@ function App() {
             <Route path="search" element={<SearchPage leftsideChose={leftsideChose} setLeftsideChose={setLeftsideChose} pjList={pjList} setClickedPj={setClickedPj} clickedPj={clickedPj} updateProject={updateProject} renderUserProfileImage={renderUserProfileImage} account={account} />} />
             <Route path="create" element={<PjcreatePage setLeftsideChose={setLeftsideChose} pjList={pjList} setPjList={setPjList} account={account} />} />
             <Route path="chat" element={<ChatPage />} />
-            <Route path="team" element={<TeamPage />} />
             <Route path="mypage" element={<MyPage account={account} setAccount={setAccount} pjList={pjList} />} />
           </Route>
         </Routes>

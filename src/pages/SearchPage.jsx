@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import basicProfile from '../assets/snake.webp';
+import basicProfile from '../assets/snake.webp'
+import { Link } from 'react-router-dom'
 
 function SearchPage({
   leftsideChose,
@@ -57,7 +58,7 @@ function SearchPage({
         <h2>프로젝트 탐색</h2>
         <span>내 전공·관심 스택에 맞는 팀을 찾아보세요</span>
       </div>
-      <div id='new_project_button' onClick={()=>{setLeftsideChose("프로젝트 생성")}}>+ 새 프로젝트</div>
+      <Link to='/create' id='new_project_button' onClick={()=>{setLeftsideChose("프로젝트 생성");}}>+ 새 프로젝트</Link>
     </div>
 
     <div id='search_list'>

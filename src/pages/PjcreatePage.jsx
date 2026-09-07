@@ -128,7 +128,12 @@ function PjcreatePage({
 
         <div id='pj-skill_stack'>
           <div><span>기술 스택</span><span className='pj-free'> · 자유입력</span></div>
-          <div id='pj-skillBox'><input id='pj-skill_input' onChange={(e) => {setCurrentSkill(e.target.value);}} value={currentSkill}/><div id='pj-skill_add' onClick={()=>{SkillAdd()}}>추가</div></div>
+          <div id='pj-skillBox'><input id='pj-skill_input' onChange={(e) => {setCurrentSkill(e.target.value);}} value={currentSkill} onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              SkillAdd();
+            }
+          }}/>
+          <div id='pj-skill_add' onClick={()=>{SkillAdd()}}>추가</div></div>
 
           <div id='pg-added_skill'>
             {skillList.map((name, index) => (
