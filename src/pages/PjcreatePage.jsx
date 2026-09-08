@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { Link, Outlet } from 'react-router-dom'
+import { api } from '../API/api.js'
+
 
 function PjcreatePage({
   setLeftsideChose = () => {},
@@ -63,7 +65,7 @@ function PjcreatePage({
     setPjCount(pjCount +1);
   }
 
-  function PjAddSubmit() {
+  async function PjAddSubmit() {
     if(currentProject.pjtitle === "" || currentProject.pjcontents === "") {
       alert('프로젝트 제목과 내용을 전부 채워주세요');
       return;
@@ -76,6 +78,26 @@ function PjcreatePage({
       pjcount: pjCount
     };
 
+    try {
+      await api.post('/projects', {
+        "projectTitle" : newProject.pjtitle,
+        "projectDescription" : newProject.pjcontents,
+        "projectDeadline" : newProject.pjdeadline,
+        pjprogress: newProject.pjprogress,
+        pjpersonCount: newProject.pjpersonCount,
+        pjPerson : newProject.pjPerson,
+        pjdone: newProject.pjdone,
+        "requiredMajors" : newProject.pjJungong,
+        "requiredStacks" : newProject.pjskill,
+        pjcount: newProject.pjcount
+      });
+
+      setPjList([...pjList, newProject]);
+      setLeftsideChose("탐색");
+    } catch(error) {
+      alert("프로젝트 생성 중 오류가 발생했습니다");
+    }
+
     setCurrentProjcet({
       pjtitle : "",
       pjcontents : "",
@@ -86,9 +108,6 @@ function PjcreatePage({
       pjPerson : [account],
       pjdone: false
     })
-
-    setPjList([...pjList, newProject]);
-    setLeftsideChose("탐색");
   }
 
   return (

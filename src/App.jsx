@@ -1,5 +1,7 @@
 ﻿import { useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import axios from 'axios';
+
 import './App.css'
 import './ChatPage.css'
 import './MyPage.css'
@@ -10,6 +12,8 @@ import SearchPage from './pages/SearchPage.jsx'
 import PjcreatePage from './pages/PjcreatePage.jsx'
 import ChatPage from './pages/ChatPage.jsx'
 import MyPage from './pages/MyPage.jsx'
+import X from './pages/X.jsx'
+
 
 function App() {
   const [account, setAccount] = useState({
@@ -96,6 +100,7 @@ function App() {
             <Route path="create" element={<PjcreatePage setLeftsideChose={setLeftsideChose} pjList={pjList} setPjList={setPjList} account={account} />} />
             <Route path="chat" element={<ChatPage />} />
             <Route path="mypage" element={<MyPage account={account} setAccount={setAccount} pjList={pjList} />} />
+            <Route path='x' element={<X/>}/>
           </Route>
         </Routes>
       </div>

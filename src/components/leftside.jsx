@@ -23,6 +23,7 @@ function MainPage({
         <Link id='main-pj_create' className={currentLeftsideChose === '프로젝트 생성' ? 'active' : ''} to="/create" onClick={() => updateLeftsideChose('프로젝트 생성')}><div></div>프로젝트 생성</Link>
         <Link id='main-chat' className={currentLeftsideChose === '채팅' ? 'active' : ''} to="/chat" onClick={() => updateLeftsideChose('채팅')}><div></div>채팅</Link>
         <Link id='main-mypage' className={currentLeftsideChose === '마이페이지' ? 'active' : ''} to="/mypage" onClick={() => updateLeftsideChose('마이페이지')}><div></div>마이페이지</Link>
+        <Link id='main-?' className={currentLeftsideChose === '?' ? 'active' : ''} to="/x" onClick={() => updateLeftsideChose('?')}><div></div>?</Link>
         
         <div id='main-addBox' onClick={()=> {
           window.location.href= "https://youtu.be/hXO6hQNRqMc?si=YrY-Uh5lKqqKuSKb&t=20";

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import githubIcon from '../assets/github.webp'
+import { api } from '../API/api.js';
 
 function Sign({setisLogin, setAccount}) {
 
@@ -14,8 +15,22 @@ function Sign({setisLogin, setAccount}) {
 
 function LoginPage({setIsSign, setisLogin}) {
 
-  const LoginSubmit = (e) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const LoginSubmit = async (e) => {
     e.preventDefault();
+
+    try {
+      const response = await api.post('/login', {
+        userEmail: email,
+        password: password
+      });
+    } catch (error) {
+      alert("아이디 또는 비밀번호가 올바르지 않습니다.");
+      return;
+    } 
+
     setisLogin(true);
   }
 
@@ -40,11 +55,15 @@ function LoginPage({setIsSign, setisLogin}) {
 
           <div id="email_box">
             <span>학교 이메일</span><br/>
-            <input placeholder='mte@dsm.hs.kr' type='email' required></input>
+            <input placeholder='mte@dsm.hs.kr' type='email' required onChange={(e) => {
+              setEmail(e.target.value);
+            }} value={email}></input>
           </div>
           <div id="email_box">
             <span>비밀번호</span><br/>
-            <input type='password' required></input>
+            <input type='password' required onChange={(e) => {
+              setPassword(e.target.value);
+            }} value={password}></input>
           </div>
           <button id='Login_button' type='submit'>로그인</button>
           <div id='gayjoygo'>계정이 없으신가요? <span id='gayib' onClick={() => {
@@ -140,7 +159,7 @@ function SignPage({setIsSign, setisLogin, setAccount, setEmailconfirm, setUserEm
     setSkills(skills.filter(skill => skill !== skillToRemove));
   };
 
-  const SignSubmit = (e) => {
+  const SignSubmit = async (e) => {
     e.preventDefault();
 
     if (!email.endsWith("@dsm.hs.kr")) {
@@ -148,20 +167,26 @@ function SignPage({setIsSign, setisLogin, setAccount, setEmailconfirm, setUserEm
       return;
     }
 
-    setAccount({
-      name: userName,
-      email: email,
-      password: userPw,
-      introduce: userIntro,
-      image: profileImage,
-      number: email.slice(4,8),
-      jungong: jungongSelect,
-      gender: genderSelect,
-      skills: skills
-    })
+    try {
+      await api.post('/signup', {
+        "userName": userName,
+        "userEmail": email,
+        "userPassword": userPw,
+        introduce: userIntro,
+        image: profileImage,
+        "userStudentNumber": email.slice(4,8),
+        "userMajor": jungongSelect,
+        "userGender": genderSelect,
+        "interestStacks": skills
+      });
 
-    setUserEmail(email);
-    setEmailconfirm(true);
+      setUserEmail(email);
+      setEmailconfirm(true);
+
+    } catch(error) {
+      alert("회원가입 중 오류 발생");
+      return;
+    }
   }
 
   return(
@@ -246,7 +271,6 @@ function SignPage({setIsSign, setisLogin, setAccount, setEmailconfirm, setUserEm
             </div>
           </div>
 
-          {/* 🌟 관심 기술 스택 UI 변경 부분 */}
           <div id='sign_skill'>
             <div style={{ marginBottom: '12px' }}>
               <span>관심 기술 스택</span><span className='pj-free' style={{ color: '#adb5bd', fontSize: '13px', fontWeight: '500' }}> · 자유 입력</span>

@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import basicProfile from '../assets/snake.webp'
 import { Link } from 'react-router-dom'
+import { api } from '../API/api.js'
+
 
 function SearchPage({
   leftsideChose,
@@ -18,12 +20,12 @@ function SearchPage({
   if (leftsideChose === '프젝자세히' && clickedPj?.pjtitle) {
     return (
       <ProjectMore
-        clickedPj={clickedPj}
-        setClickedPj={setClickedPj}
-        updateProject={updateProject}
-        setLeftsideChose={setLeftsideChose}
-        account={account}
-        renderUserProfileImage={renderUserProfileImage}
+        // clickedPj={clickedPj}
+        // setClickedPj={setClickedPj}
+        // updateProject={updateProject}
+        // setLeftsideChose={setLeftsideChose}
+        // account={account}
+        // renderUserProfileImage={renderUserProfileImage}
       />
     );
   }
@@ -106,6 +108,16 @@ function SearchPage({
 }
 
 function ProjectMore({clickedPj, setClickedPj, updateProject, setLeftsideChose, account, renderUserProfileImage}) {
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await api.get('/projects/{projectId}');
+      } catch(error) {
+        
+      }
+    }
+  })
   
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
 
