@@ -1,13 +1,9 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useOutletContext } from 'react-router-dom'
 import { api } from '../API/api.js'
 
-
-function PjcreatePage({
-  setLeftsideChose = () => {},
-  setPjList = () => {},
-  account = {}
-}) {
+function PjcreatePage() {
+  const { setLeftsideChose, setPjList, account } = useOutletContext()
   const navigate = useNavigate();
 
     const [jungongSelect, setJungongSelect] = useState([]);

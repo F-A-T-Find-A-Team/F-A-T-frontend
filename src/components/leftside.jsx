@@ -9,7 +9,12 @@ function MainPage({
   setAccount,
   leftsideChose,
   setLeftsideChose,
-  renderUserProfileImage
+  renderUserProfileImage,
+  pjList,
+  setPjList,
+  clickedPj,
+  setClickedPj,
+  updateProject
 }) {
   const [localLeftsideChose, setLocalLeftsideChose] = useState('탐색')
   const currentLeftsideChose = leftsideChose ?? localLeftsideChose
@@ -47,11 +52,11 @@ function MainPage({
           renderUserProfileImage,
           account,
           setAccount,
-          pjList: [],
-          setPjList: () => {},
-          clickedPj: { pjPerson: [] },
-          setClickedPj: () => {},
-          updateProject: () => {}
+          pjList,
+          setPjList,
+          clickedPj,
+          setClickedPj,
+          updateProject
         }} />
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useOutletContext } from 'react-router-dom'
 import { api } from '../API/api.js'
 
 const POLLING_INTERVAL = 5000;
@@ -18,7 +19,8 @@ function formatTime(dateValue) {
   return date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
 }
 
-function ChatPage({ account = {} }) {
+function ChatPage() {
+  const { account = {} } = useOutletContext()
   const [chatRooms, setChatRooms] = useState([]);
   const [activeRoomId, setActiveRoomId] = useState(null);
   const [messages, setMessages] = useState([]);

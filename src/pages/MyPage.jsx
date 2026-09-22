@@ -1,24 +1,15 @@
 import { useState } from 'react'
+import { useNavigate, useOutletContext } from 'react-router-dom'
 import basicProfile from '../assets/snake.webp'
 import { api } from '../API/api.js'
 
-function MyPage({ account, setAccount, pjList = [] }) {
-  const [isEditing, setIsEditing] = useState(false);
+function MyPage() {
+  const { account, pjList = [] } = useOutletContext()
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   // account 정보가 아직 로드되지 않았을 때의 예외 처리
   if (!account) return null;
-
-  // isEditing 상태가 true면 수정 페이지(MyPageRemake)를 렌더링
-  if (isEditing) {
-    return (
-      <MyPageRemake 
-        account={account} 
-        setAccount={setAccount} 
-        setIsEditing={setIsEditing} 
-      />
-    );
-  }
 
   const myFeedbacks = [];
   pjList.forEach(pj => {
@@ -39,11 +30,6 @@ function MyPage({ account, setAccount, pjList = [] }) {
   // 이메일 앞부분을 아이디처럼 사용
   const userId = account.email ? account.email.split('@')[0] : 'user';
   
-  // 프로필 이미지가 없을 때 텍스트 아바타
-  const avatarText = account.name && account.name.length >= 3 
-    ? account.name.charAt(1) 
-    : (account.name ? account.name.charAt(0) : '👤');
-
   return (
     <div className="mypage-container">
       <div className="profile-header-card">
@@ -75,7 +61,7 @@ function MyPage({ account, setAccount, pjList = [] }) {
             <div className="badge major-badge">{account.jungong}</div>
           </div>
         </div>
-        <button className="edit-profile-btn" onClick={() => setIsEditing(true)}>프로필 수정</button>
+        <button className="edit-profile-btn" onClick={() => navigate('/mypage/edit')}>프로필 수정</button>
       </div>
 
       <div className="profile-bio">
@@ -202,7 +188,8 @@ function MyFeedbackModal({ myFeedbacks, onClose }) {
   );
 }
 
-function MyPageRemake({ account, setAccount, setIsEditing }) {
+export function MyPageRemake({ account, setAccount }) {
+  const navigate = useNavigate();
   // 로컬 상태 관리
   const [intro, setIntro] = useState(account.introduce || "");
   const [gender, setGender] = useState(account.gender || "남"); // 기타 제거
@@ -238,7 +225,7 @@ function MyPageRemake({ account, setAccount, setIsEditing }) {
         jungong: jungongSelect,
         skills: skills
       });
-      setIsEditing(false);
+      navigate('/mypage');
     } catch (error) {
       console.error('내 정보 수정 중 오류 발생', error);
       alert('내 정보 수정 중 오류가 발생했습니다.');

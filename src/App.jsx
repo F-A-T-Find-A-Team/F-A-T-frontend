@@ -8,10 +8,14 @@ import './MyPage.css'
 
 import Leftside from './components/leftside.jsx'
 import LoginPage from './pages/LoginPage.jsx'
+import SignupPage from './pages/SignupPage.jsx'
+import EmailVerificationPage from './pages/EmailVerificationPage.jsx'
 import SearchPage from './pages/SearchPage.jsx'
+import ProjectMorePage from './pages/ProjectMorePage.jsx'
 import PjcreatePage from './pages/PjcreatePage.jsx'
 import ChatPage from './pages/ChatPage.jsx'
 import MyPage from './pages/MyPage.jsx'
+import MyPageEditPage from './pages/MyPageEditPage.jsx'
 import X from './pages/X.jsx'
 
 
@@ -26,7 +30,7 @@ function App() {
     skills: ['sold the world', 'stealth']
   })
   const [isLogin, setIsLogin] = useState(false)
-  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [isDarkMode] = useState(false)
   const [leftsideChose, setLeftsideChose] = useState('탐색')
   const [pjList, setPjList] = useState([])
   const [clickedPj, setClickedPj] = useState({ pjPerson: [] })
@@ -138,6 +142,26 @@ function App() {
           }
         />
         <Route
+          path="/signup"
+          element={
+            isLogin ? <Navigate to="/" replace /> : (
+              <div className="bg-login" id="body">
+                <SignupPage />
+              </div>
+            )
+          }
+        />
+        <Route
+          path="/signup/verify"
+          element={
+            isLogin ? <Navigate to="/" replace /> : (
+              <div className="bg-login" id="body">
+                <EmailVerificationPage setisLogin={setIsLogin} />
+              </div>
+            )
+          }
+        />
+        <Route
           path="/"
           element={
             isLogin ? (
@@ -152,16 +176,19 @@ function App() {
                   setPjList={setPjList}
                   clickedPj={clickedPj}
                   setClickedPj={setClickedPj}
+                  updateProject={updateProject}
                 />
               </div>
             ) : <Navigate to="/login" replace />
           }
         >
-          <Route index element={<SearchPage leftsideChose={leftsideChose} setLeftsideChose={setLeftsideChose} pjList={pjList} setClickedPj={setClickedPj} clickedPj={clickedPj} updateProject={updateProject} renderUserProfileImage={renderUserProfileImage} account={account} />} />
-          <Route path="search" element={<SearchPage leftsideChose={leftsideChose} setLeftsideChose={setLeftsideChose} pjList={pjList} setClickedPj={setClickedPj} clickedPj={clickedPj} updateProject={updateProject} renderUserProfileImage={renderUserProfileImage} account={account} />} />
-          <Route path="create" element={<PjcreatePage setLeftsideChose={setLeftsideChose} pjList={pjList} setPjList={setPjList} account={account} />} />
-          <Route path="chat" element={<ChatPage account={account} />} />
-          <Route path="mypage" element={<MyPage account={account} setAccount={setAccount} pjList={pjList} />} />
+          <Route index element={<Navigate to="search" replace />} />
+          <Route path="search" element={<SearchPage />} />
+          <Route path="project/:projectId" element={<ProjectMorePage />} />
+          <Route path="create" element={<PjcreatePage />} />
+          <Route path="chat" element={<ChatPage />} />
+          <Route path="mypage" element={<MyPage />} />
+          <Route path="mypage/edit" element={<MyPageEditPage />} />
           <Route path="x" element={<X />} />
         </Route>
         <Route path="*" element={<Navigate to={isLogin ? "/" : "/login"} replace />} />
