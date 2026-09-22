@@ -1577,6 +1577,15 @@
   background-color: #06e2a0; 
 }
 
+.Jiwun-container {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /*X 영역*/
 
 #X-container {

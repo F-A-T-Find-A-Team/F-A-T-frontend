@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import basicProfile from '../assets/snake.webp'
+import { api } from '../API/api.js'
 
 function MyPage({ account, setAccount, pjList = [] }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -222,18 +223,25 @@ function MyPageRemake({ account, setAccount, setIsEditing }) {
   const genders = ['남', '여']; // 기타 제거
 
   // 저장 로직 (이때 setAccount가 정상 작동하려면 MainPage에서 props로 내려줘야 함)
-  const handleSave = () => {
-    if (typeof setAccount === 'function') {
+  const handleSave = async () => {
+    try {
+      await api.patch('/mypage', {
+        userMajor: jungongSelect,
+        interestStacks: skills
+        // TODO: 명세에 없는 자기소개·성별 필드는 백엔드 Request JSON이 확정되면 추가합니다.
+      });
+
       setAccount({
         ...account,
         introduce: intro,
         gender: gender,
-        jungong: jungongSelect, // 단일 전공 저장
-        skills: skills // 기술 스택 저장
+        jungong: jungongSelect,
+        skills: skills
       });
       setIsEditing(false);
-    } else {
-      console.error("setAccount가 함수가 아닙니다. MainPage에서 props를 확인해주세요.");
+    } catch (error) {
+      console.error('내 정보 수정 중 오류 발생', error);
+      alert('내 정보 수정 중 오류가 발생했습니다.');
     }
   };
 

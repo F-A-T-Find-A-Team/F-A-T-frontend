@@ -22,12 +22,13 @@ function LoginPage({setIsSign, setisLogin}) {
     e.preventDefault();
 
     try {
-      const response = await api.post('/login', {
+      await api.post('/login', {
         userEmail: email,
         password: password
       });
     } catch (error) {
       alert("아이디 또는 비밀번호가 올바르지 않습니다.");
+      console.log("로그인 에러:",error);
       return;
     } 
 
@@ -47,6 +48,9 @@ function LoginPage({setIsSign, setisLogin}) {
       </div>
 
       <div id="Login-rightside">
+        
+        <button onClick={()=>{setisLogin(true);}} style={{position:"fixed", right:14, top: 14}}>스키비야</button>
+
         <div id="Login-rightside-box">
           <div>
             <h1>로그인</h1>
@@ -185,6 +189,7 @@ function SignPage({setIsSign, setisLogin, setAccount, setEmailconfirm, setUserEm
 
     } catch(error) {
       alert("회원가입 중 오류 발생");
+      console.log("회원가입 에러:",error)
       return;
     }
   }

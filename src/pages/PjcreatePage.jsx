@@ -1,14 +1,14 @@
 import { useState } from 'react'
-import { Link, Outlet } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { api } from '../API/api.js'
 
 
 function PjcreatePage({
   setLeftsideChose = () => {},
-  pjList = [],
   setPjList = () => {},
   account = {}
 }) {
+  const navigate = useNavigate();
 
     const [jungongSelect, setJungongSelect] = useState([]);
     const [skillList, setSkillList] = useState([]);
@@ -79,22 +79,28 @@ function PjcreatePage({
     };
 
     try {
-      await api.post('/projects', {
+      const response = await api.post('/projects', {
         "projectTitle" : newProject.pjtitle,
         "projectDescription" : newProject.pjcontents,
         "projectDeadline" : newProject.pjdeadline,
-        pjprogress: newProject.pjprogress,
-        pjpersonCount: newProject.pjpersonCount,
-        pjPerson : newProject.pjPerson,
-        pjdone: newProject.pjdone,
         "requiredMajors" : newProject.pjJungong,
         "requiredStacks" : newProject.pjskill,
-        pjcount: newProject.pjcount
       });
 
-      setPjList([...pjList, newProject]);
+      const projectId = response.data?.projectId ?? response.data?.id ?? response.data;
+      setPjList((prevProjects) => [...prevProjects, {
+        ...newProject,
+        projectId,
+        projectTitle: newProject.pjtitle,
+        projectDescription: newProject.pjcontents,
+        projectDeadline: newProject.pjdeadline,
+        requiredMajors: newProject.pjJungong,
+        requiredStacks: newProject.pjskill
+      }]);
       setLeftsideChose("탐색");
+      navigate('/search');
     } catch(error) {
+      console.error('프로젝트 생성 중 오류 발생', error);
       alert("프로젝트 생성 중 오류가 발생했습니다");
     }
 
@@ -181,7 +187,7 @@ function PjcreatePage({
 
         <div id='pj-SubmitOrNot'>
           <Link id='pj-cancel' onClick={()=>{setLeftsideChose("탐색");}} type='button' to='/search'>취소</Link>
-          <Link id='pj-submit' onClick={PjAddSubmit} type='button' to='/search'>프로젝트 생성하기</Link>
+          <button id='pj-submit' onClick={PjAddSubmit} type='button'>프로젝트 생성하기</button>
         </div>
       </div>
     </div>

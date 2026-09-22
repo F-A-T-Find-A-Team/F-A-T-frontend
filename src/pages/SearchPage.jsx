@@ -17,15 +17,15 @@ function SearchPage({
   
   const [currentSearch, setCurrentSearch] = useState("전체");
 
-  if (leftsideChose === '프젝자세히' && clickedPj?.pjtitle) {
+  if (leftsideChose === '프젝자세히' && (clickedPj?.pjtitle || clickedPj?.projectTitle)) {
     return (
       <ProjectMore
-        // clickedPj={clickedPj}
-        // setClickedPj={setClickedPj}
-        // updateProject={updateProject}
-        // setLeftsideChose={setLeftsideChose}
-        // account={account}
-        // renderUserProfileImage={renderUserProfileImage}
+        clickedPj={clickedPj}
+        setClickedPj={setClickedPj}
+        updateProject={updateProject}
+        setLeftsideChose={setLeftsideChose}
+        account={account}
+        renderUserProfileImage={renderUserProfileImage}
       />
     );
   }
@@ -74,8 +74,8 @@ function SearchPage({
       {pjList.map((project, index) => (
         <div key={index} onClick={()=>{setLeftsideChose("프젝자세히"); setClickedPj(project)}}>
           <div id='project-header'>
-            <h3>{project.pjtitle}</h3>
-            <div>{getDDay(project.pjdeadline, project.pjdone)}</div>
+            <h3>{project.projectTitle ?? project.pjtitle}</h3>
+            <div>{getDDay(project.projectDeadline ?? project.pjdeadline, project.pjdone)}</div>
           </div>
 
           <div id='search-userProfile'>
@@ -85,20 +85,20 @@ function SearchPage({
           </div>
 
           <div id='search-jungongBox'>
-            {project.pjJungong && project.pjJungong.map((jungong, i) => (
+            {(project.requiredMajors ?? project.pjJungong ?? []).map((jungong, i) => (
               <span key={i} className={jungong}>{jungong}</span>
             ))}
           </div>
 
           <div id='search-skillBox'>
-            {project.pjskill && project.pjskill.map((skill, i) => (
+            {(project.requiredStacks ?? project.pjskill ?? []).map((skill, i) => (
               <span key={i}>{skill}</span>
             ))}
           </div>
 
           <div id='project-bottom'>
             <div id='pjbottom-continue'><div></div>진행중</div>
-            <div id='pjbottom-mojib'>모집 {project.pjpersonCount}/{project.pjcount}</div>
+            <div id='pjbottom-mojib'>모집 {project.pjpersonCount ?? project.pjPerson?.length ?? 0}/{project.pjcount}</div>
           </div>
         </div>
       ))}
@@ -110,14 +110,35 @@ function SearchPage({
 function ProjectMore({clickedPj, setClickedPj, updateProject, setLeftsideChose, account, renderUserProfileImage}) {
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    if (!clickedPj?.projectId) return;
+
+    const fetchProject = async () => {
       try {
-        const response = await api.get('/projects/{projectId}');
-      } catch(error) {
-        
+        const response = await api.get(`/projects/${clickedPj.projectId}`);
+        const project = response.data;
+
+        setClickedPj((currentProject) => ({
+          ...currentProject,
+          ...project,
+          projectId: project.projectId ?? currentProject.projectId,
+          pjtitle: project.projectTitle ?? currentProject.pjtitle,
+          pjcontents: project.projectDescription ?? currentProject.pjcontents,
+          pjdeadline: project.projectDeadline ?? currentProject.pjdeadline,
+          pjJungong: project.requiredMajors ?? currentProject.pjJungong,
+          pjskill: project.requiredStacks ?? currentProject.pjskill,
+          pjPerson: project.members ?? project.pjPerson ?? currentProject.pjPerson,
+          pjcount: project.maxMembers ?? project.pjcount,
+          pjpersonCount: project.memberCount ?? project.pjpersonCount,
+          pjprogress: project.pjprogress ?? ({ IDEA: 1, IN_PROGRESS: 2, COMPLETED: 3 }[project.projectStatus] ?? currentProject.pjprogress),
+          pjdone: project.pjdone ?? project.projectStatus === 'COMPLETED'
+        }));
+      } catch (error) {
+        console.error('프로젝트 상세 조회에 실패했습니다.', error);
       }
-    }
-  })
+    };
+
+    fetchProject();
+  }, [clickedPj?.projectId, setClickedPj]);
   
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
 
@@ -126,13 +147,29 @@ function ProjectMore({clickedPj, setClickedPj, updateProject, setLeftsideChose, 
       alert("PM만 변경할 수 있어요.");
       return;
     }
-    
-    const updatedPj = {
-      ...clickedPj,
-      pjprogress: value,
-      pjdone: value === 3 ? true : false 
+
+    const statusByProgress = {
+      1: 'IDEA',
+      2: 'IN_PROGRESS',
+      3: 'COMPLETED'
     };
-    updateProject(updatedPj);
+    const status = statusByProgress[value];
+
+    if (!status || !clickedPj.projectId) return;
+
+    api.patch(`/projects/${clickedPj.projectId}/status`, { status })
+      .then(() => {
+        updateProject({
+          ...clickedPj,
+          projectStatus: status,
+          pjprogress: value,
+          pjdone: value === 3
+        });
+      })
+      .catch((error) => {
+        console.error('진행도 수정 중 오류 발생', error);
+        alert("진행도 수정 중 오류가 발생했습니다.");
+      });
   }
 
   const getDDay = (deadlineStr, isDone) => {
@@ -172,7 +209,7 @@ function ProjectMore({clickedPj, setClickedPj, updateProject, setLeftsideChose, 
                 } 
               : {
                 backgroundImage: `url(${basicProfile})`, 
-                backgroundSize: 'cover', 
+                backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 color: 'transparent'
               }
@@ -182,9 +219,9 @@ function ProjectMore({clickedPj, setClickedPj, updateProject, setLeftsideChose, 
       );
     };
 
-  const PjMemberAdd = (newMember) => {
+  const PjMemberAdd = () => {
     const isAlreadyMember = clickedPj.pjPerson?.some(
-      (person) => person.email === newMember.email
+      (person) => person.email === account.email
     );
 
     if (isAlreadyMember) {
@@ -197,16 +234,17 @@ function ProjectMore({clickedPj, setClickedPj, updateProject, setLeftsideChose, 
       return;
     }
 
-    const updatedPj = {
-      ...clickedPj,
-      pjpersonCount: (clickedPj.pjPerson?.length || 0) + 1,
-      pjPerson: [...(clickedPj.pjPerson || []), newMember]
-    };
-    updateProject(updatedPj);
+    // TODO: 명세의 POST /projects/{projectId}/applications Request JSON이 확정되면 연결합니다.
+    alert('지원 API의 요청 형식이 아직 확정되지 않았습니다.');
   }
+
+  const [isPjAdd,setIsPjAdd] = useState(false);
 
   return (
     <div id='more-box'>
+
+      {isPjAdd ? <Jiwun/> : ""}
+
       <div id='more-leftside'>
         <span id='more-gotosearch' onClick={()=>{setLeftsideChose("탐색");}}>&lt; 탐색으로</span>
         <h2>{clickedPj.pjtitle}</h2>
@@ -287,7 +325,7 @@ function ProjectMore({clickedPj, setClickedPj, updateProject, setLeftsideChose, 
               ))}
             </div>
 
-            <button id='mright-submit' onClick={()=> {PjMemberAdd(account)}}>지원하기</button>
+            <button id='mright-submit' onClick={PjMemberAdd}>지원하기</button>
             <button id='mright-pmExcuse'>PM에게 문의하기</button>
           </div>
 
@@ -309,6 +347,17 @@ function ProjectMore({clickedPj, setClickedPj, updateProject, setLeftsideChose, 
           updateProject={updateProject}
         />
       )}
+    </div>
+  )
+}
+
+function Jiwun() {
+
+  return (
+    <div className='Jiwun-container'>
+      <div className='Jiwun-box'>
+        Hello
+      </div>
     </div>
   )
 }
@@ -360,7 +409,36 @@ function FeedbackModal({ clickedPj, onClose, updateProject }) {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    const feedbackEntries = Object.entries(feedbacks).filter(
+      ([, feedback]) => feedback.comment?.trim()
+    );
+    const feedbackRequests = feedbackEntries.map(([email, feedback]) => {
+      const member = clickedPj.pjPerson?.find((person) => person.email === email);
+      const targetUserId = member?.userId ?? member?.id;
+
+      if (!targetUserId) return null;
+
+      return api.post(`/projects/${clickedPj.projectId}/feedbacks`, {
+        targetUserId,
+        content: feedback.comment
+        // TODO: 별점은 현재 피드백 Request JSON에 없어 백엔드 명세 확정 후 추가합니다.
+      });
+    }).filter(Boolean);
+
+    if (feedbackRequests.length !== feedbackEntries.length) {
+      alert('일부 팀원의 사용자 ID가 없어 피드백을 전송할 수 없습니다.');
+      return;
+    }
+
+    try {
+      await Promise.all(feedbackRequests);
+    } catch (error) {
+      console.error('피드백 작성 중 오류 발생', error);
+      alert('피드백 작성 중 오류가 발생했습니다.');
+      return;
+    }
+
     const updatedPj = {
       ...clickedPj,
       feedbacks: feedbacks
@@ -428,7 +506,7 @@ function FeedbackModal({ clickedPj, onClose, updateProject }) {
                   type="text" 
                   className="feedback-input" 
                   placeholder="예: 커뮤니케이션이 정확하고 마감을 잘 지켰어요"
-                  value={memberFeedback.comment || ''} /* 🌟 || '' 추가: undefined 방지 */
+                  value={memberFeedback.comment || ''}
                   onChange={(e) => handleCommentChange(member.email, e.target.value)}
                 />
               </div>
@@ -445,3 +523,4 @@ function FeedbackModal({ clickedPj, onClose, updateProject }) {
 }
 
 export default SearchPage;
+
