@@ -69,45 +69,6 @@ function MyPage() {
       </div>
 
       <div className="mypage-grid">
-        <div className="grid-card github-card">
-          <div className="github-header">
-            <div className="github-title">
-              <div className="github-icon"></div>
-              <h3>GitHub 연동됨</h3>
-            </div>
-            <span className="badge connected-badge">Connected</span>
-          </div>
-          
-          <a href="#" className="github-link">
-            @{userId}-dev <span className="dot">·</span> 24 repos ↗
-          </a>
-          
-          <div className="language-stats">
-            <div className="lang-row">
-              <span className="lang-name">TypeScript</span>
-              <div className="progress-bar-bg">
-                <div className="progress-bar-fill" style={{ width: '75%' }}></div>
-              </div>
-            </div>
-            <div className="lang-row">
-              <span className="lang-name">Dart</span>
-              <div className="progress-bar-bg">
-                <div className="progress-bar-fill" style={{ width: '45%' }}></div>
-              </div>
-            </div>
-            <div className="lang-row">
-              <span className="lang-name">Python</span>
-              <div className="progress-bar-bg">
-                <div className="progress-bar-fill" style={{ width: '25%' }}></div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="github-footer">
-            <span className="footer-info">저장소 6개 연동 중</span>
-            <button className="disconnect-btn">연동 해지</button>
-          </div>
-        </div>
 
         <div className="right-cards-column">
           <div className="grid-card stats-card">

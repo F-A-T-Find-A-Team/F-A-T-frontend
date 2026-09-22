@@ -49,8 +49,6 @@ function LoginPage({ setisLogin }) {
           </div>
           <button id='Login_button' type='submit'>로그인</button>
           <div id='gayjoygo'>계정이 없으신가요? <span id='gayib' onClick={() => navigate('/signup')}>회원가입</span></div>
-          <div id='else'><div className='else'></div><span>또는</span><div className='else'></div></div>
-          <div id='github_login' type='button'><img src={githubIcon} /><span>GitHub로 계속하기</span></div>
         </div>
       </div>
     </form>
