@@ -2,9 +2,18 @@
 import Image from "next/image";
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 
 export default function Login() {
+
+    const router = useRouter();
+
+    const login = () => {
+        router.push('/search');
+    }
+
+
     return (
         <div className="Login-container">
             <section className="Login-leftSide">
@@ -40,7 +49,9 @@ export default function Login() {
                         <input id="pwInput" type="password"/>
                     </div>
 
-                    <button className="Login-submit">로그인</button>
+                    <button className="Login-submit" onClick={()=>{
+                        login();
+                    }}>로그인</button>
 
                     <span className="Login-signBox">계정이 없으신가요? <Link href="/sign">회원가입</Link></span>
                 </div>

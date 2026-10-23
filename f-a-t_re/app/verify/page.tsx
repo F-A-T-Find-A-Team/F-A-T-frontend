@@ -1,7 +1,11 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Verify() {
+
+    const router = useRouter();
+
     const [code, setCode] = useState('482913'); // 이미지처럼 초기값 세팅 (DEMO)
     const [timeLeft, setTimeLeft] = useState(276); // 4분 36초 (276초)
 
@@ -26,6 +30,10 @@ export default function Verify() {
         setTimeLeft(300); // 5분으로 재설정
         alert('인증 코드가 재전송되었습니다.');
     };
+
+    const confirm = () => {
+        router.push('search');
+    }
 
     return (
         <main className="Verify-container">
@@ -69,7 +77,9 @@ export default function Verify() {
                 </div>
 
                 {/* 인증 완료 버튼 */}
-                <button type="button" className="Verify-submitBtn">
+                <button type="button" className="Verify-submitBtn" onClick={()=>{
+                    confirm();
+                }}>
                     인증 완료
                 </button>
 
