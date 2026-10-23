@@ -6,7 +6,7 @@ export default function SideBar() {
     const pathname = usePathname();
     const sideOpsList = [
         { name: '탐색', href: '/search' },
-        { name: '프로젝트 생성', href: '/create' },
+        { name: '프로젝트 생성', href: '/pjcreate' },
         { name: '채팅', href: '/chat' },
         { name: '마이페이지', href: '/mypage' },
     ];

@@ -22,14 +22,14 @@ export default function Search() {
                     <span>내 전공·관심 스택에 맞는 팀을 찾아보세요</span>
                 </div>
 
-                <button>+ 새 프로젝트</button>
+                <Link href='/pjcreate'>+ 새 프로젝트</Link>
             </div>
 
             <div className='Search-typeBox'>
                 {type.map((item) => (
                     <div className={currentType === item.name ? "active Search-type" : "Search-type"} onClick={()=>{
                         setCurrentTpye(item.name);
-                    }}>
+                    }} key={item.name}>
                         {item.name}
                     </div>
                 ))}

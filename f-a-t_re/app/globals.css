@@ -2,6 +2,7 @@
   margin: 0px;
   padding: 0px;
   box-sizing: border-box;
+  font-family: Pretendard;
 }
 
 
@@ -191,10 +192,6 @@ input, textarea {
     color: #334155;
     transition: border-color 0.2s;
     resize: none;
-}
-
-input:focus, textarea:focus {
-    border-color: #10b981;
 }
 
 .Sign-inputGroup {
@@ -549,7 +546,6 @@ input:focus, textarea:focus {
     display: flex;
     min-height: 100vh;
     width: 100%;
-    padding: 2rem;
 }
 
 .main-content {
@@ -610,7 +606,7 @@ input:focus, textarea:focus {
   font-weight: 800;
 }
 
-.Search-top > button {
+.Search-top > a {
   width: 8rem;
   height: 3rem;
   background-color: #20f1a8;
@@ -620,6 +616,11 @@ input:focus, textarea:focus {
   border-radius: 10px;
   font-weight: 700;
   font-size: 14px;
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
 }
 
 .Search-typeBox {
@@ -642,4 +643,57 @@ input:focus, textarea:focus {
 .Search-type.active {
   background-color: #22f0a8;
   font-weight: 700;
+}
+
+
+/*Pjcreate 영역 */
+
+.Pjcreate-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.Pjcreate-box {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+}
+
+.Pjcreate-box > h2 {
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.Pjcreate-box > label {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+}
+
+#Pjcreate-titleInput {
+  background-color: white;
+  height: 3.2rem;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+#Pjcreate-desInput {
+  background-color: white;
+  height: 10rem;
+  font-weight: 500;
+  font-size: 16px;
+  font-family: Pretendard;
+}
+
+.Pjcreate-container input, .Pjcreate-container textarea {
+  background-color: white;
+}
+
+.Pjcreate-peopleBox {
+  background-color: white;
+  padding: 8px;
+  border: 1px solid #e8e8e9;
+  border-radius: 14px;
 }
