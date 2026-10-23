@@ -3,34 +3,25 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-
 export default function Sign() {
-
     const router = useRouter();
 
-    // 상태 관리 (이미지 UI와 동일하게 초기값 설정)
-    const [nickname, setNickname] = useState('hwjeong');
+    // 상태 관리 
+    const [nickname, setNickname] = useState('');
     const [idNum, setIdNum] = useState('');
     const [name, setName] = useState('');
     const [bio, setBio] = useState('');
     const [gender, setGender] = useState('남');
-    const [selectedMajors, setSelectedMajors] = useState<string[]>(['FE']);
+    
+    // 👉 [변경] 전공을 배열이 아닌 단일 문자열로 변경 (기본값 'FE')
+    const [selectedMajor, setSelectedMajor] = useState<string>('FE');
     
     // 관심 기술 스택 관련 상태
     const [techInput, setTechInput] = useState('');
-    const [techStacks, setTechStacks] = useState<string[]>(['Flutter', 'Spring Boot', 'Django']);
+    const [techStacks, setTechStacks] = useState<string[]>([]);
 
     // 전공 리스트
     const majorList = ['FE', 'BE', 'EM(FW)', 'EM(HW)', 'Flutter', 'android', 'iOS', 'UI/UX', 'Game', 'security', 'AI'];
-
-    // 전공 토글 함수 (복수 선택)
-    const toggleMajor = (major: string) => {
-        if (selectedMajors.includes(major)) {
-            setSelectedMajors(selectedMajors.filter(m => m !== major));
-        } else {
-            setSelectedMajors([...selectedMajors, major]);
-        }
-    };
 
     // 기술 스택 추가 함수
     const addTechStack = () => {
@@ -115,14 +106,16 @@ export default function Sign() {
                 </div>
 
                 <div className="Sign-inputGroup">
-                    <label>내 전공 <span className="Sign-subLabel">(복수 선택 가능)</span></label>
+                    <label>내 전공 <span className="Sign-subLabel">(1개 선택)</span></label>
                     <div className="Sign-tagsBox">
                         {majorList.map((major) => (
                             <button
                                 key={major}
                                 type="button"
-                                className={`Sign-tag ${selectedMajors.includes(major) ? 'active' : ''}`}
-                                onClick={() => toggleMajor(major)}
+                                // 👉 [변경] 선택된 단일 전공과 일치할 때만 active 클래스 부여
+                                className={`Sign-tag ${selectedMajor === major ? 'active' : ''}`}
+                                // 👉 [변경] 클릭 시 해당 전공으로 값 교체
+                                onClick={() => setSelectedMajor(major)}
                             >
                                 {major}
                             </button>

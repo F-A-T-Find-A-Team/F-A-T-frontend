@@ -264,7 +264,7 @@ input:focus, textarea:focus {
     font-weight: 600;
     font-size: 13px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background-color 0.24s;
 }
 
 .Sign-tag.active {
