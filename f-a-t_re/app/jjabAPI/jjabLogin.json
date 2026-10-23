@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "data": {
+    "accessToken": "jwt-access-token",
+    "tokenType": "Bearer",
+    "expiresInSeconds": 3600,
+    "user": {
+      "id": 7,
+      "nickname": "hwjeong",
+      "majors": [
+        "FE"
+      ]
+    }
+  }
+}
