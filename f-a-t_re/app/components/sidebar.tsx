@@ -29,6 +29,17 @@ export default function SideBar() {
                     </div>
                 ))}
             </nav>
+
+            <div className='sideBar-my'>
+                <div className='sideBar-myprofile'>
+
+                </div>
+
+                <div className='sideBar-myinfo'>
+                    <h5>hwjeong</h5>
+                    <span>1107 · FE</span>
+                </div>
+            </div>
         </aside>
     );
 }

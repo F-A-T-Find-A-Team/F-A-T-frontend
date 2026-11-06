@@ -1,0 +1,536 @@
+.Mypage-container {
+  width: 100%;
+  max-width: 1000px;
+  padding: 40px 60px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #1a202c;
+  box-sizing: border-box;
+}
+
+/* 프로필 상단 카드 */
+.Mypage-profileCard {
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 32px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.Mypage-profileHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.Mypage-avatarGroup {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.Mypage-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: rgba(34, 240, 168, 0.15);
+  color: #065f46;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.Mypage-userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.Mypage-nameRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.Mypage-userName {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.Mypage-genderBadge {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.Mypage-userSubText {
+  font-size: 15px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.Mypage-roleBadge {
+  display: inline-block;
+  background-color: #f3f4f6;
+  color: #374151;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 6px;
+  width: fit-content;
+  margin-top: 2px;
+}
+
+/* 버튼 스타일 */
+.Mypage-editButton, .Mypage-completeButton {
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.Mypage-editButton:hover {
+  background-color: #e5e7eb;
+}
+
+.Mypage-completeButton {
+  background-color: #22f0a8;
+  color: #111827;
+  border: none;
+}
+
+.Mypage-completeButton:hover {
+  background-color: #1bd895;
+}
+
+/* 한 줄 소개 (조회 모드) */
+.Mypage-bioText {
+  margin-top: 24px;
+  margin-bottom: 24px;
+  font-size: 15px;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+/* 프로필 수정 폼 박스 */
+.Mypage-editFormCard {
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 28px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  margin-top: 24px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.Mypage-formSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.Mypage-formLabelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.Mypage-textCount {
+  color: #9ca3af;
+  font-weight: normal;
+  font-size: 12px;
+}
+
+.Mypage-bioInput {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background-color: #f8fafc;
+  font-size: 14px;
+  color: #1f2937;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.Mypage-bioInput:focus {
+  border-color: #22f0a8;
+  background-color: #ffffff;
+}
+
+/* 성별 선택 버튼 그룹 */
+.Mypage-genderGroup {
+  display: flex;
+  gap: 10px;
+}
+
+.Mypage-genderOptionButton {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background-color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4b5563;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.Mypage-genderOptionButton.Mypage-active {
+  background-color: #22f0a8;
+  color: #111827;
+  border-color: #22f0a8;
+}
+
+/* 전공 선택 태그 그리드/플렉스 */
+.Mypage-majorGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.Mypage-tagButton {
+  padding: 8px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.Mypage-tagButton.Mypage-active {
+  background-color: #22f0a8;
+  color: #111827;
+  border-color: #22f0a8;
+}
+
+/* 관심 기술 스택 입력 */
+.Mypage-techInputRow {
+  display: flex;
+  gap: 10px;
+}
+
+.Mypage-techInput {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background-color: #f8fafc;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.Mypage-techInput:focus {
+  border-color: #22f0a8;
+  background-color: #ffffff;
+}
+
+.Mypage-addButton {
+  padding: 0 20px;
+  background-color: #22f0a8;
+  color: #111827;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.Mypage-addButton:hover {
+  background-color: #1bd895;
+}
+
+.Mypage-techTagsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.Mypage-techChip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #334155;
+}
+
+.Mypage-chipDelete {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Mypage-chipDelete:hover {
+  color: #ef4444;
+}
+
+/* 프로젝트 통계 */
+.Mypage-statsCard {
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background-color: #ffffff;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.Mypage-statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.Mypage-statNumber {
+  font-size: 28px;
+  font-weight: 800;
+  color: #059669;
+}
+
+.Mypage-statLabel {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.Mypage-statDivider {
+  width: 1px;
+  height: 40px;
+  background-color: #e5e7eb;
+}
+
+/* 받은 피드백 요약 카드 */
+.Mypage-feedbackSummaryCard {
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 24px;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.Mypage-feedbackSummaryCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.Mypage-feedbackSummaryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.Mypage-feedbackTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.Mypage-feedbackTitle {
+  font-weight: 700;
+  font-size: 16px;
+  color: #111827;
+}
+
+.Mypage-ratingText {
+  color: #059669;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.Mypage-arrowIcon {
+  color: #9ca3af;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.Mypage-feedbackSubText {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
+/* 피드백 모달 스타일 */
+.Mypage-modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.Mypage-modalContent {
+  background-color: #ffffff;
+  width: 90%;
+  max-width: 480px;
+  max-height: 85vh;
+  border-radius: 24px;
+  padding: 32px;
+  position: relative;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.Mypage-closeButton {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: #f3f4f6;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 16px;
+  color: #6b7280;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Mypage-closeButton:hover {
+  background-color: #e5e7eb;
+  color: #111827;
+}
+
+.Mypage-modalTitle {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: #111827;
+}
+
+.Mypage-modalRatingRow {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.Mypage-modalRatingBig {
+  font-size: 36px;
+  font-weight: 800;
+  color: #059669;
+}
+
+.Mypage-modalRatingSub {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.Mypage-feedbackList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.Mypage-feedbackItemCard {
+  background-color: #f9fafb;
+  border: 1px solid #f3f4f6;
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.Mypage-itemHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.Mypage-itemAuthorInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.Mypage-itemAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.Mypage-itemAuthorName {
+  font-weight: 700;
+  font-size: 15px;
+  color: #111827;
+}
+
+.Mypage-itemRating {
+  color: #059669;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.Mypage-itemComment {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.5;
+  margin: 0 0 10px 0;
+}
+
+.Mypage-itemProjectTitle {
+  font-size: 12px;
+  color: #9ca3af;
+  margin: 0;
+}
