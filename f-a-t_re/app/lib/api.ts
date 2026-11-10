@@ -110,7 +110,6 @@ function buildUrl(path: string, query?: Record<string, string | number | undefin
   });
   return url.toString();
 }
-
 async function refreshAccessToken() {
   if (!refreshRequest) {
     refreshRequest = (async () => {
@@ -219,7 +218,6 @@ export const authApi = {
   ),
   login: (email: string, password: string) => request<LoginResponse>('/auth/login', { method: 'POST', auth: false, body: { email, password } }),
   logout: () => request<void>('/auth/logout', { method: 'POST' }),
-  githubLogin: (code: string) => request<LoginResponse>('/auth/github', { method: 'POST', auth: false, body: { code } }),
 };
 
 export const usersApi = {
@@ -281,10 +279,4 @@ export const chatApi = {
     request<{ items: ChatMessage[]; nextCursor: string | null; hasMore: boolean }>(`/chat-rooms/${roomId}/messages`, { query }),
   sendMessage: (roomId: number, content: string, clientMessageId: string) =>
     request<Omit<ChatMessage, 'sender'>>(`/chat-rooms/${roomId}/messages`, { method: 'POST', body: { type: 'TEXT', content, clientMessageId } }),
-};
-
-export const integrationsApi = {
-  github: () => request<{ connected: boolean; username?: string; repositoryCount?: number }>('/integrations/github'),
-  connectGithub: (code: string) => request<unknown>('/integrations/github', { method: 'POST', body: { code } }),
-  disconnectGithub: () => request<void>('/integrations/github', { method: 'DELETE' }),
 };

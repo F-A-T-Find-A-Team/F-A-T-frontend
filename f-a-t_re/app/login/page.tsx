@@ -9,36 +9,10 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isGithubSubmitting, setIsGithubSubmitting] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const code = params.get('code');
-        if (!code) {
-            if (getAccessToken()) router.replace('/search');
-            return;
-        }
-        void Promise.resolve().then(async () => {
-            const returnedState = params.get('state');
-            const expectedState = window.sessionStorage.getItem('githubLoginState');
-            window.sessionStorage.removeItem('githubLoginState');
-            window.history.replaceState(null, '', window.location.pathname);
-            if (!expectedState || returnedState !== expectedState) {
-                setError('GitHub 인증 상태를 확인할 수 없습니다. 다시 시도해주세요.');
-                return;
-            }
-            setIsGithubSubmitting(true);
-            try {
-                const result = await authApi.githubLogin(code);
-                setAccessToken(result.accessToken);
-                router.replace('/search');
-            } catch (err) {
-                setError(err instanceof ApiError ? err.message : 'GitHub 로그인에 실패했습니다.');
-            } finally {
-                setIsGithubSubmitting(false);
-            }
-        });
+        if (getAccessToken()) router.replace('/search');
     }, [router]);
 
     async function login() {
@@ -55,18 +29,6 @@ export default function Login() {
         } finally {
             setIsSubmitting(false);
         }
-    }
-
-    function loginWithGithub() {
-        const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
-        if (!clientId) {
-            setError('GitHub OAuth를 사용하려면 NEXT_PUBLIC_GITHUB_CLIENT_ID를 설정해주세요.');
-            return;
-        }
-        const state = crypto.randomUUID();
-        window.sessionStorage.setItem('githubLoginState', state);
-        const query = new URLSearchParams({ client_id: clientId, redirect_uri: `${window.location.origin}/login`, scope: 'read:user', state });
-        window.location.assign(`https://github.com/login/oauth/authorize?${query}`);
     }
 
     return (

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import './MyPage.css';
-import { ApiError, applicationsApi, integrationsApi, projectsApi, usersApi, type UserProfile } from '@/app/lib/api';
+import { ApiError, applicationsApi, projectsApi, usersApi, type UserProfile } from '@/app/lib/api';
 
 interface Feedback {
   id: number;
@@ -34,7 +34,6 @@ export default function MyPage() {
   const [applications, setApplications] = useState<Array<{ id: number; project: { id: number; title: string }; position: string; status: string; createdAt: string }>>([]);
   const [feedbackRating, setFeedbackRating] = useState(0);
   const [feedbackCount, setFeedbackCount] = useState(0);
-  const [github, setGithub] = useState<{ connected: boolean; username?: string; repositoryCount?: number } | null>(null);
   const [applicants, setApplicants] = useState<Array<{ id: number; applicant: { id: number; nickname: string; majors?: string[] }; position: string; reason: string; status: string }>>([]);
   const [applicantProjectId, setApplicantProjectId] = useState<number | null>(null);
   const [feedbackProjectId, setFeedbackProjectId] = useState<number | null>(null);
@@ -74,24 +73,6 @@ export default function MyPage() {
         projectTitle: item.project.title,
       })));
     }).catch(() => undefined);
-    integrationsApi.github().then((result) => { if (!cancelled) setGithub(result); }).catch(() => undefined);
-    const oauthParams = new URLSearchParams(window.location.search);
-    const oauthCode = oauthParams.get('code');
-    if (oauthCode) {
-      const returnedState = oauthParams.get('state');
-      const expectedState = window.sessionStorage.getItem('githubOAuthState');
-      window.sessionStorage.removeItem('githubOAuthState');
-      window.history.replaceState(null, '', window.location.pathname);
-      if (!expectedState || returnedState !== expectedState) {
-        Promise.resolve().then(() => { if (!cancelled) setError('GitHub 인증 상태를 확인할 수 없습니다. 다시 시도해주세요.'); });
-      } else {
-        integrationsApi.connectGithub(oauthCode).then(() => integrationsApi.github()).then((result) => {
-          if (!cancelled) setGithub(result);
-        }).catch((err) => {
-          if (!cancelled) setError(err instanceof ApiError ? err.message : 'GitHub 계정을 연결하지 못했습니다.');
-        });
-      }
-    }
     return () => { cancelled = true; };
   }, []);
 
@@ -205,15 +186,6 @@ export default function MyPage() {
     }
   };
 
-  const disconnectGithub = async () => {
-    try {
-      await integrationsApi.disconnectGithub();
-      setGithub({ connected: false });
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'GitHub 연결을 해제하지 못했습니다.');
-    }
-  };
-
   const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -249,19 +221,6 @@ export default function MyPage() {
     } catch (err) {
       setError(err instanceof ApiError ? err.message : '프로젝트를 수정하지 못했습니다.');
     }
-  };
-
-  const connectGithub = () => {
-    const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
-    if (!clientId) {
-      setError('GitHub OAuth를 사용하려면 NEXT_PUBLIC_GITHUB_CLIENT_ID를 설정해주세요.');
-      return;
-    }
-    const state = crypto.randomUUID();
-    window.sessionStorage.setItem('githubOAuthState', state);
-    const redirectUri = `${window.location.origin}/mypage`;
-    const query = new URLSearchParams({ client_id: clientId, redirect_uri: redirectUri, scope: 'read:user repo', state });
-    window.location.assign(`https://github.com/login/oauth/authorize?${query}`);
   };
 
   return (
@@ -461,14 +420,6 @@ export default function MyPage() {
           </div>
         ))}
         {applications.length === 0 && <p>지원 내역이 없습니다.</p>}
-      </section>
-
-      <section className="Mypage-dataSection">
-        <h2>GitHub</h2>
-        <div className="Mypage-dataRow">
-          <span>{github?.connected ? `${github.username ?? '연결됨'} · 저장소 ${github.repositoryCount ?? 0}개` : '연결되지 않음'}</span>
-          {github?.connected ? <button type="button" onClick={disconnectGithub}>연결 해제</button> : <button type="button" onClick={connectGithub}>GitHub 연결</button>}
-        </div>
       </section>
 
       {/* 피드백 모달 */}
