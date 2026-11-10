@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ApiError, authApi, setAccessToken } from '@/app/lib/api';
+import { ApiError, authApi, getAccessToken, setAccessToken } from '@/app/lib/api';
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -15,7 +15,10 @@ export default function Login() {
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const code = params.get('code');
-        if (!code) return;
+        if (!code) {
+            if (getAccessToken()) router.replace('/search');
+            return;
+        }
         void Promise.resolve().then(async () => {
             const returnedState = params.get('state');
             const expectedState = window.sessionStorage.getItem('githubLoginState');
@@ -46,7 +49,7 @@ export default function Login() {
             const result = await authApi.login(email, password);
             setAccessToken(result.accessToken);
             alert(`${result.user.nickname}님 환영합니다!`);
-            router.push('/search');
+            router.replace('/search');
         } catch (err) {
             setError(err instanceof ApiError ? err.message : '서버에 연결할 수 없습니다. API 주소를 확인해주세요.');
         } finally {
