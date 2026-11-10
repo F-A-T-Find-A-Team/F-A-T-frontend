@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './MyPage.css';
+import { ApiError, applicationsApi, integrationsApi, projectsApi, usersApi, type UserProfile } from '@/app/lib/api';
 
 interface Feedback {
   id: number;
@@ -12,33 +13,6 @@ interface Feedback {
   projectTitle: string;
 }
 
-const MOCK_FEEDBACKS: Feedback[] = [
-  {
-    id: 1,
-    authorName: '김태오',
-    authorInitial: '태',
-    rating: 5.0,
-    comment: 'UI 감각이 뛰어나고 마감을 항상 지켰어요. 다음에도 같이 하고 싶어요.',
-    projectTitle: '교내 동아리 소개 랜딩',
-  },
-  {
-    id: 2,
-    authorName: '서지안',
-    authorInitial: '지',
-    rating: 4.5,
-    comment: '소통이 정확하고 코드 리뷰를 꼼꼼히 해줬어요.',
-    projectTitle: '교내 일정 알리미 봇',
-  },
-  {
-    id: 3,
-    authorName: '이도현',
-    authorInitial: '현',
-    rating: 5.0,
-    comment: '문제를 빠르게 파악하고 팀 분위기를 잘 이끌었어요.',
-    projectTitle: '교내 동아리 소개 랜딩',
-  },
-];
-
 const ALL_MAJORS = [
   'FE', 'BE', 'EM(FW)', 'EM(HW)', 'Flutter', 'android', 'iOS', 'UI/UX', 'Game', 'security', 'AI'
 ];
@@ -46,12 +20,80 @@ const ALL_MAJORS = [
 export default function MyPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-
-  const [bio, setBio] = useState('Flutter랑 디자인을 좋아하는 FE 개발자예요. 완성도 높은 앱을 함께 만들어가요.');
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [nickname, setNickname] = useState('');
+  const [name, setName] = useState('');
+  const [studentId, setStudentId] = useState('');
+  const [bio, setBio] = useState('');
   const [gender, setGender] = useState('남');
-  const [selectedMajors, setSelectedMajors] = useState<string[]>(['FE']);
+  const [selectedMajors, setSelectedMajors] = useState<string[]>([]);
   const [techInput, setTechInput] = useState('');
-  const [techStacks, setTechStacks] = useState<string[]>(['Flutter', 'Spring Boot', 'Django']);
+  const [techStacks, setTechStacks] = useState<string[]>([]);
+  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+  const [projects, setProjects] = useState<Array<{ id: number; title: string; stage: string; role: string; memberCount: number; capacity: number }>>([]);
+  const [applications, setApplications] = useState<Array<{ id: number; project: { id: number; title: string }; position: string; status: string; createdAt: string }>>([]);
+  const [feedbackRating, setFeedbackRating] = useState(0);
+  const [feedbackCount, setFeedbackCount] = useState(0);
+  const [github, setGithub] = useState<{ connected: boolean; username?: string; repositoryCount?: number } | null>(null);
+  const [applicants, setApplicants] = useState<Array<{ id: number; applicant: { id: number; nickname: string; majors?: string[] }; position: string; reason: string; status: string }>>([]);
+  const [applicantProjectId, setApplicantProjectId] = useState<number | null>(null);
+  const [feedbackProjectId, setFeedbackProjectId] = useState<number | null>(null);
+  const [pendingReviewIds, setPendingReviewIds] = useState<number[]>([]);
+  const [reviewDrafts, setReviewDrafts] = useState<Record<number, { rating: number; comment: string }>>({});
+  const [editingProject, setEditingProject] = useState<{ id: number; description: string; deadline: string; capacity: number } | null>(null);
+  const [error, setError] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    usersApi.me().then((result) => {
+      if (cancelled) return;
+      setProfile(result);
+      setNickname(result.nickname);
+      setName(result.name);
+      setStudentId(result.studentId);
+      setBio(result.bio);
+      setGender(result.gender === 'MALE' ? '남' : result.gender === 'FEMALE' ? '여' : '기타');
+      setSelectedMajors(result.majors);
+      setTechStacks(result.techStacks);
+    }).catch((err) => {
+      if (!cancelled) setError(err instanceof ApiError ? err.message : '프로필을 불러오지 못했습니다.');
+    });
+    usersApi.projects({ page: 0, size: 20 }).then((result) => { if (!cancelled) setProjects(result.items); }).catch(() => undefined);
+    usersApi.applications({ page: 0, size: 20 }).then((result) => { if (!cancelled) setApplications(result.items); }).catch(() => undefined);
+    usersApi.feedback({ page: 0, size: 20 }).then((result) => {
+      if (cancelled) return;
+      setFeedbackRating(result.averageRating);
+      setFeedbackCount(result.totalReviews);
+      setFeedbacks(result.items.map((item) => ({
+        id: item.id,
+        authorName: item.reviewer.nickname,
+        authorInitial: item.reviewer.nickname.slice(0, 1),
+        rating: item.rating,
+        comment: item.comment,
+        projectTitle: item.project.title,
+      })));
+    }).catch(() => undefined);
+    integrationsApi.github().then((result) => { if (!cancelled) setGithub(result); }).catch(() => undefined);
+    const oauthParams = new URLSearchParams(window.location.search);
+    const oauthCode = oauthParams.get('code');
+    if (oauthCode) {
+      const returnedState = oauthParams.get('state');
+      const expectedState = window.sessionStorage.getItem('githubOAuthState');
+      window.sessionStorage.removeItem('githubOAuthState');
+      window.history.replaceState(null, '', window.location.pathname);
+      if (!expectedState || returnedState !== expectedState) {
+        Promise.resolve().then(() => { if (!cancelled) setError('GitHub 인증 상태를 확인할 수 없습니다. 다시 시도해주세요.'); });
+      } else {
+        integrationsApi.connectGithub(oauthCode).then(() => integrationsApi.github()).then((result) => {
+          if (!cancelled) setGithub(result);
+        }).catch((err) => {
+          if (!cancelled) setError(err instanceof ApiError ? err.message : 'GitHub 계정을 연결하지 못했습니다.');
+        });
+      }
+    }
+    return () => { cancelled = true; };
+  }, []);
 
   const toggleMajor = (major: string) => {
     if (selectedMajors.includes(major)) {
@@ -79,19 +121,169 @@ export default function MyPage() {
     setTechStacks(techStacks.filter((t) => t !== techToRemove));
   };
 
+  const saveProfile = async () => {
+    setIsSaving(true);
+    setError('');
+    try {
+      const updated = await usersApi.updateMe({
+        nickname,
+        gender: gender === '남' ? 'MALE' : gender === '여' ? 'FEMALE' : 'OTHER',
+        bio,
+        majors: selectedMajors,
+        techStacks,
+      });
+      setProfile((current) => current ? { ...current, ...updated } : current);
+      setIsEditing(false);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : '프로필을 저장하지 못했습니다.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const cancelApplication = async (applicationId: number) => {
+    try {
+      await applicationsApi.cancel(applicationId);
+      setApplications((current) => current.filter((application) => application.id !== applicationId));
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : '지원을 취소하지 못했습니다.');
+    }
+  };
+
+  const openApplicants = async (projectId: number) => {
+    setError('');
+    try {
+      const result = await projectsApi.applicants(projectId, { page: 0, size: 20 });
+      setApplicants(result.items);
+      setApplicantProjectId(projectId);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : '지원자 목록을 불러오지 못했습니다.');
+    }
+  };
+
+  const reviewApplicant = async (applicationId: number, status: 'ACCEPTED' | 'REJECTED') => {
+    try {
+      await applicationsApi.review(applicationId, status);
+      setApplicants((current) => current.map((item) => item.id === applicationId ? { ...item, status } : item));
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : '지원서를 처리하지 못했습니다.');
+    }
+  };
+
+  const changeStage = async (projectId: number, stage: 'IN_PROGRESS' | 'COMPLETED') => {
+    try {
+      await projectsApi.changeStage(projectId, stage);
+      setProjects((current) => current.map((project) => project.id === projectId ? { ...project, stage } : project));
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : '프로젝트 단계를 변경하지 못했습니다.');
+    }
+  };
+
+  const openFeedbackForm = async (projectId: number) => {
+    setError('');
+    try {
+      const result = await projectsApi.feedbackStatus(projectId);
+      setPendingReviewIds(result.pendingUserIds);
+      setReviewDrafts(Object.fromEntries(result.pendingUserIds.map((id) => [id, { rating: 5, comment: '' }])));
+      setFeedbackProjectId(projectId);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : '피드백 상태를 불러오지 못했습니다.');
+    }
+  };
+
+  const submitProjectFeedback = async () => {
+    if (feedbackProjectId === null || pendingReviewIds.some((id) => !reviewDrafts[id]?.comment.trim())) return;
+    try {
+      await projectsApi.submitFeedback(feedbackProjectId, pendingReviewIds.map((revieweeId) => ({
+        revieweeId,
+        rating: reviewDrafts[revieweeId].rating,
+        comment: reviewDrafts[revieweeId].comment.trim(),
+      })));
+      setFeedbackProjectId(null);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : '피드백을 제출하지 못했습니다.');
+    }
+  };
+
+  const disconnectGithub = async () => {
+    try {
+      await integrationsApi.disconnectGithub();
+      setGithub({ connected: false });
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'GitHub 연결을 해제하지 못했습니다.');
+    }
+  };
+
+  const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      const result = await usersApi.uploadAvatar(file);
+      setProfile((current) => current ? { ...current, avatarUrl: result.avatarUrl } : current);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : '프로필 사진을 등록하지 못했습니다.');
+    } finally {
+      event.target.value = '';
+    }
+  };
+
+  const startProjectEdit = async (projectId: number) => {
+    try {
+      const result = await projectsApi.detail(projectId);
+      setEditingProject({ id: projectId, description: result.description, deadline: result.deadline, capacity: result.capacity });
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : '프로젝트 정보를 불러오지 못했습니다.');
+    }
+  };
+
+  const saveProjectEdit = async () => {
+    if (!editingProject) return;
+    try {
+      await projectsApi.update(editingProject.id, {
+        description: editingProject.description,
+        deadline: editingProject.deadline,
+        capacity: editingProject.capacity,
+      });
+      setProjects((current) => current.map((project) => project.id === editingProject.id ? { ...project, capacity: editingProject.capacity } : project));
+      setEditingProject(null);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : '프로젝트를 수정하지 못했습니다.');
+    }
+  };
+
+  const connectGithub = () => {
+    const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
+    if (!clientId) {
+      setError('GitHub OAuth를 사용하려면 NEXT_PUBLIC_GITHUB_CLIENT_ID를 설정해주세요.');
+      return;
+    }
+    const state = crypto.randomUUID();
+    window.sessionStorage.setItem('githubOAuthState', state);
+    const redirectUri = `${window.location.origin}/mypage`;
+    const query = new URLSearchParams({ client_id: clientId, redirect_uri: redirectUri, scope: 'read:user repo', state });
+    window.location.assign(`https://github.com/login/oauth/authorize?${query}`);
+  };
+
   return (
     <div className="Mypage-container">
+      {error && <p role="alert" className="Mypage-error">{error}</p>}
       {/* 프로필 카드 */}
       <div className="Mypage-profileCard">
         <div className="Mypage-profileHeader">
           <div className="Mypage-avatarGroup">
-            <div className="Mypage-avatar">현</div>
+            <div className="Mypage-avatar" style={profile?.avatarUrl ? { backgroundImage: `url(${profile.avatarUrl})`, backgroundSize: 'cover' } : undefined}>
+              {!profile?.avatarUrl && nickname.slice(0, 1)}
+            </div>
+            <label className="Mypage-avatarUpload">
+              사진 변경
+              <input type="file" accept="image/*" onChange={uploadAvatar} />
+            </label>
             <div className="Mypage-userInfo">
               <div className="Mypage-nameRow">
-                <span className="Mypage-userName">hwjeong</span>
+                <span className="Mypage-userName">{nickname || '프로필 불러오는 중'}</span>
                 <span className="Mypage-genderBadge">{gender}</span>
               </div>
-              <p className="Mypage-userSubText">1107 · 정현무</p>
+              <p className="Mypage-userSubText">{studentId} · {name}</p>
               <div style={{ display: 'flex', gap: '4px', marginTop: '4px' }}>
                 {selectedMajors.map((m) => (
                   <span key={m} className="Mypage-roleBadge">{m}</span>
@@ -100,8 +292,8 @@ export default function MyPage() {
             </div>
           </div>
           {isEditing ? (
-            <button className="Mypage-completeButton" onClick={() => setIsEditing(false)}>
-              완료
+            <button className="Mypage-completeButton" onClick={saveProfile} disabled={isSaving}>
+              {isSaving ? '저장 중...' : '저장'}
             </button>
           ) : (
             <button className="Mypage-editButton" onClick={() => setIsEditing(true)}>
@@ -113,6 +305,10 @@ export default function MyPage() {
 
       {isEditing ? (
         <div className="Mypage-editFormCard">
+          <div className="Mypage-formSection">
+            <span className="Mypage-formLabelRow">닉네임</span>
+            <input type="text" className="Mypage-bioInput" value={nickname} onChange={(e) => setNickname(e.target.value)} maxLength={30} />
+          </div>
           <div className="Mypage-formSection">
             <div className="Mypage-formLabelRow">
               <span>한 줄 소개</span>
@@ -201,12 +397,12 @@ export default function MyPage() {
       {/* 프로젝트 통계 */}
       <div className="Mypage-statsCard">
         <div className="Mypage-statItem">
-          <span className="Mypage-statNumber">1</span>
+          <span className="Mypage-statNumber">{profile?.projectStats.inProgress ?? 0}</span>
           <span className="Mypage-statLabel">진행중</span>
         </div>
         <div className="Mypage-statDivider" />
         <div className="Mypage-statItem">
-          <span className="Mypage-statNumber">2</span>
+          <span className="Mypage-statNumber">{profile?.projectStats.completed ?? 0}</span>
           <span className="Mypage-statLabel">완료</span>
         </div>
       </div>
@@ -216,12 +412,64 @@ export default function MyPage() {
         <div className="Mypage-feedbackSummaryHeader">
           <div className="Mypage-feedbackTitleGroup">
             <span className="Mypage-feedbackTitle">받은 피드백 보기</span>
-            <span className="Mypage-ratingText">★ 4.8</span>
+            <span className="Mypage-ratingText">★ {feedbackRating.toFixed(1)}</span>
           </div>
           <span className="Mypage-arrowIcon">&gt;</span>
         </div>
-        <p className="Mypage-feedbackSubText">완료 프로젝트에서 12개</p>
+        <p className="Mypage-feedbackSubText">완료 프로젝트에서 {feedbackCount}개</p>
       </div>
+
+      <section className="Mypage-dataSection">
+        <h2>내 프로젝트</h2>
+        {projects.map((project) => (
+          <div className="Mypage-dataRow" key={project.id}>
+            <div>
+              <strong>{project.title}</strong>
+              <span>{project.role} · {project.memberCount}/{project.capacity}명 · {project.stage}</span>
+            </div>
+            {project.role === 'PM' && (
+              <div className="Mypage-rowActions">
+                <button type="button" onClick={() => startProjectEdit(project.id)}>내용 수정</button>
+                <button type="button" onClick={() => openApplicants(project.id)}>지원자</button>
+                {project.stage === 'IDEA' && <button type="button" onClick={() => changeStage(project.id, 'IN_PROGRESS')}>진행 시작</button>}
+                {project.stage === 'IN_PROGRESS' && <button type="button" onClick={() => changeStage(project.id, 'COMPLETED')}>완료 처리</button>}
+                {project.stage === 'COMPLETED' && <button type="button" onClick={() => openFeedbackForm(project.id)}>팀원 평가</button>}
+              </div>
+            )}
+            {editingProject?.id === project.id && (
+              <div className="Mypage-projectEditor">
+                <label>상세 내용<textarea value={editingProject.description} onChange={(event) => setEditingProject({ ...editingProject, description: event.target.value })} /></label>
+                <label>마감일<input type="date" value={editingProject.deadline} onChange={(event) => setEditingProject({ ...editingProject, deadline: event.target.value })} /></label>
+                <label>정원<input type="number" min={project.memberCount} max={12} value={editingProject.capacity} onChange={(event) => setEditingProject({ ...editingProject, capacity: Number(event.target.value) })} /></label>
+                <div className="Mypage-rowActions"><button type="button" onClick={saveProjectEdit}>저장</button><button type="button" onClick={() => setEditingProject(null)}>취소</button></div>
+              </div>
+            )}
+          </div>
+        ))}
+        {projects.length === 0 && <p>참여 중인 프로젝트가 없습니다.</p>}
+      </section>
+
+      <section className="Mypage-dataSection">
+        <h2>내 지원 현황</h2>
+        {applications.map((application) => (
+          <div className="Mypage-dataRow" key={application.id}>
+            <div>
+              <strong>{application.project.title}</strong>
+              <span>{application.position} · {application.status}</span>
+            </div>
+            {application.status === 'PENDING' && <button type="button" onClick={() => cancelApplication(application.id)}>지원 취소</button>}
+          </div>
+        ))}
+        {applications.length === 0 && <p>지원 내역이 없습니다.</p>}
+      </section>
+
+      <section className="Mypage-dataSection">
+        <h2>GitHub</h2>
+        <div className="Mypage-dataRow">
+          <span>{github?.connected ? `${github.username ?? '연결됨'} · 저장소 ${github.repositoryCount ?? 0}개` : '연결되지 않음'}</span>
+          {github?.connected ? <button type="button" onClick={disconnectGithub}>연결 해제</button> : <button type="button" onClick={connectGithub}>GitHub 연결</button>}
+        </div>
+      </section>
 
       {/* 피드백 모달 */}
       {isModalOpen && (
@@ -236,12 +484,12 @@ export default function MyPage() {
 
             <h2 className="Mypage-modalTitle">받은 피드백</h2>
             <div className="Mypage-modalRatingRow">
-              <span className="Mypage-modalRatingBig">4.8</span>
-              <span className="Mypage-modalRatingSub">함께한 팀원 12명 평가</span>
+              <span className="Mypage-modalRatingBig">{feedbackRating.toFixed(1)}</span>
+              <span className="Mypage-modalRatingSub">함께한 팀원 {feedbackCount}명 평가</span>
             </div>
 
             <div className="Mypage-feedbackList">
-              {MOCK_FEEDBACKS.map((item) => (
+              {feedbacks.map((item) => (
                 <div key={item.id} className="Mypage-feedbackItemCard">
                   <div className="Mypage-itemHeader">
                     <div className="Mypage-itemAuthorInfo">
@@ -254,7 +502,47 @@ export default function MyPage() {
                   <p className="Mypage-itemProjectTitle">{item.projectTitle}</p>
                 </div>
               ))}
+              {feedbacks.length === 0 && <p>받은 피드백이 없습니다.</p>}
             </div>
+          </div>
+        </div>
+      )}
+
+      {applicantProjectId !== null && (
+        <div className="Mypage-modalOverlay" onClick={() => setApplicantProjectId(null)}>
+          <div className="Mypage-modalContent" onClick={(event) => event.stopPropagation()}>
+            <button className="Mypage-closeButton" onClick={() => setApplicantProjectId(null)}>✕</button>
+            <h2 className="Mypage-modalTitle">프로젝트 지원자</h2>
+            {applicants.map((application) => (
+              <div className="Mypage-dataRow" key={application.id}>
+                <div><strong>{application.applicant.nickname} · {application.position}</strong><span>{application.reason}</span></div>
+                {application.status === 'PENDING' && <div className="Mypage-rowActions"><button onClick={() => reviewApplicant(application.id, 'ACCEPTED')}>수락</button><button onClick={() => reviewApplicant(application.id, 'REJECTED')}>거절</button></div>}
+                {application.status !== 'PENDING' && <span>{application.status}</span>}
+              </div>
+            ))}
+            {applicants.length === 0 && <p>지원자가 없습니다.</p>}
+          </div>
+        </div>
+      )}
+
+      {feedbackProjectId !== null && (
+        <div className="Mypage-modalOverlay" onClick={() => setFeedbackProjectId(null)}>
+          <div className="Mypage-modalContent" onClick={(event) => event.stopPropagation()}>
+            <button className="Mypage-closeButton" onClick={() => setFeedbackProjectId(null)}>✕</button>
+            <h2 className="Mypage-modalTitle">팀원 피드백</h2>
+            {pendingReviewIds.map((userId) => (
+              <div className="Mypage-formSection" key={userId}>
+                <strong>팀원 ID {userId}</strong>
+                <label>별점
+                  <select value={reviewDrafts[userId]?.rating ?? 5} onChange={(event) => setReviewDrafts((current) => ({ ...current, [userId]: { ...current[userId], rating: Number(event.target.value) } }))}>
+                    {[5, 4, 3, 2, 1].map((rating) => <option key={rating} value={rating}>{rating}점</option>)}
+                  </select>
+                </label>
+                <textarea value={reviewDrafts[userId]?.comment ?? ''} onChange={(event) => setReviewDrafts((current) => ({ ...current, [userId]: { ...current[userId], comment: event.target.value } }))} placeholder="함께한 경험을 남겨주세요." />
+              </div>
+            ))}
+            {pendingReviewIds.length === 0 && <p>평가할 팀원이 없습니다.</p>}
+            {pendingReviewIds.length > 0 && <button className="Mypage-completeButton" onClick={submitProjectFeedback}>피드백 제출</button>}
           </div>
         </div>
       )}

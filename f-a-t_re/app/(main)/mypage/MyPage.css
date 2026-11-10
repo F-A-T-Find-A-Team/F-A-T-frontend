@@ -1,3 +1,110 @@
+.Mypage-avatarUpload {
+  align-self: center;
+  color: #167958;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.Mypage-avatarUpload input {
+  display: block;
+  max-width: 180px;
+  margin-top: 4px;
+  font-size: 11px;
+}
+
+.Mypage-projectEditor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 160px 100px;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 0;
+}
+
+.Mypage-projectEditor label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #687386;
+  font-size: 13px;
+}
+
+.Mypage-projectEditor input,
+.Mypage-projectEditor textarea {
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid #dce2e9;
+  border-radius: 6px;
+  font: inherit;
+}
+
+.Mypage-projectEditor textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+
+.Mypage-projectEditor .Mypage-rowActions {
+  grid-column: 1 / -1;
+}
+
+.Mypage-error {
+  color: #b42318;
+  margin-bottom: 12px;
+}
+
+.Mypage-dataSection {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e9ef;
+}
+
+.Mypage-dataSection h2 {
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+
+.Mypage-dataRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.Mypage-dataRow > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.Mypage-dataRow span {
+  color: #687386;
+  font-size: 14px;
+}
+
+.Mypage-dataRow button,
+.Mypage-rowActions button {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  border: 1px solid #dce2e9;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.Mypage-rowActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+@media (max-width: 640px) {
+  .Mypage-dataRow {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
 .Mypage-container {
   width: 100%;
   max-width: 1000px;
@@ -533,4 +640,10 @@
   font-size: 12px;
   color: #9ca3af;
   margin: 0;
+}
+
+@media (max-width: 640px) {
+  .Mypage-projectEditor {
+    grid-template-columns: 1fr;
+  }
 }

@@ -1,52 +1,69 @@
 'use client';
-import Image from "next/image";
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ApiError, authApi, setAccessToken } from '@/app/lib/api';
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
+    const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isGithubSubmitting, setIsGithubSubmitting] = useState(false);
     const router = useRouter();
 
-    async function login() {
-        try {
-            const res = await fetch('http://localhost:8080/api/login', { // 👉 실제 백엔드 API 엔드포인트로 변경하세요
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: password
-                }),
-            });
-
-            // HTTP 상태와 상관없이 백엔드가 보낸 JSON 응답 파싱
-            const result = await res.json();
-
-            // 실패 응답인 경우 (400, 401, 403 등)
-            if (!res.ok || !result.success) {
-                // 명세의 error.message를 그대로 띄워줍니다 (예: "이메일 인증이 완료되지 않았습니다.")
-                throw new Error(result.error?.message || '로그인에 실패했습니다.');
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        if (!code) return;
+        void Promise.resolve().then(async () => {
+            const returnedState = params.get('state');
+            const expectedState = window.sessionStorage.getItem('githubLoginState');
+            window.sessionStorage.removeItem('githubLoginState');
+            window.history.replaceState(null, '', window.location.pathname);
+            if (!expectedState || returnedState !== expectedState) {
+                setError('GitHub 인증 상태를 확인할 수 없습니다. 다시 시도해주세요.');
+                return;
             }
+            setIsGithubSubmitting(true);
+            try {
+                const result = await authApi.githubLogin(code);
+                setAccessToken(result.accessToken);
+                router.replace('/search');
+            } catch (err) {
+                setError(err instanceof ApiError ? err.message : 'GitHub 로그인에 실패했습니다.');
+            } finally {
+                setIsGithubSubmitting(false);
+            }
+        });
+    }, [router]);
 
-            // 로그인 성공 시 (200 OK)
-            console.log('로그인 성공 데이터:', result.data);
-
-            // 1. 발급받은 AccessToken을 localStorage 등에 저장 (필요한 경우)
-            localStorage.setItem('accessToken', result.data.accessToken);
-
-            // 2. 로그인 성공 알림 및 홈('/')으로 이동
-            alert(`${result.data.user.nickname}님 환영합니다!`);
+    async function login() {
+        if (isSubmitting) return;
+        setIsSubmitting(true);
+        setError('');
+        try {
+            const result = await authApi.login(email, password);
+            setAccessToken(result.accessToken);
+            alert(`${result.user.nickname}님 환영합니다!`);
             router.push('/search');
-
-        } catch (err: any) {
-            console.error("로그인 에러:", err);
-            // 백엔드에서 전달된 에러 메시지 혹은 기본 에러 메시지 출력
-            alert(err.message || '서버 통신 중 오류가 발생했습니다.');
+        } catch (err) {
+            setError(err instanceof ApiError ? err.message : '서버에 연결할 수 없습니다. API 주소를 확인해주세요.');
+        } finally {
+            setIsSubmitting(false);
         }
+    }
+
+    function loginWithGithub() {
+        const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
+        if (!clientId) {
+            setError('GitHub OAuth를 사용하려면 NEXT_PUBLIC_GITHUB_CLIENT_ID를 설정해주세요.');
+            return;
+        }
+        const state = crypto.randomUUID();
+        window.sessionStorage.setItem('githubLoginState', state);
+        const query = new URLSearchParams({ client_id: clientId, redirect_uri: `${window.location.origin}/login`, scope: 'read:user', state });
+        window.location.assign(`https://github.com/login/oauth/authorize?${query}`);
     }
 
     return (
@@ -97,8 +114,9 @@ export default function Login() {
                         />
                     </div>
 
-                    <button className="Login-submit" onClick={login}>
-                        로그인
+                    {error && <p role="alert" style={{ color: '#c2413b' }}>{error}</p>}
+                    <button className="Login-submit" onClick={login} disabled={isSubmitting}>
+                        {isSubmitting ? '로그인 중...' : '로그인'}
                     </button>
 
                     <span className="Login-signBox">계정이 없으신가요? <Link href="/sign">회원가입</Link></span>

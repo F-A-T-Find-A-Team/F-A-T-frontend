@@ -1,7 +1,7 @@
 'use client';
-import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ApiError, projectsApi } from '@/app/lib/api';
 
 export default function Pjcreate() {
     const router = useRouter();
@@ -40,21 +40,31 @@ export default function Pjcreate() {
     // 프로젝트 기한 및 모집 인원 상태
     const [deadline, setDeadline] = useState('2026-12-22');
     const [memberCount, setMemberCount] = useState(5);
+    const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleCreate = () => {
-        alert('프로젝트가 생성되었습니다!');
-
-        // 👉 생성 완료 후 모든 입력값 및 상태 초기화
-        setTitle('');
-        setDescription('');
-        setSelectedMajors([]);
-        setTechInput('');
-        setTechStacks([]);
-        setDeadline('2026-12-22');
-        setMemberCount(5);
-
-        // 페이지 이동
-        router.push('/search');
+    const handleCreate = async () => {
+        if (!title.trim() || !description.trim() || !selectedMajors.length || !deadline) {
+            setError('제목, 상세 내용, 필요 전공, 마감일을 입력해주세요.');
+            return;
+        }
+        setIsSubmitting(true);
+        setError('');
+        try {
+            const project = await projectsApi.create({
+                title: title.trim(),
+                description: description.trim(),
+                requiredMajors: selectedMajors,
+                techStacks,
+                deadline,
+                capacity: memberCount,
+            });
+            router.push(`/search?project=${project.id}`);
+        } catch (err) {
+            setError(err instanceof ApiError ? err.message : '프로젝트를 생성할 수 없습니다. API 주소와 로그인을 확인해주세요.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -168,6 +178,7 @@ export default function Pjcreate() {
                 </div>
 
                 {/* 하단 취소 / 생성 버튼 영역 */}
+                {error && <p role="alert" style={{ color: '#c2413b', marginTop: '1rem' }}>{error}</p>}
                 <div style={{ display: "flex", gap: "12px", marginTop: "3rem" }}>
                     <button 
                         type="button" 
@@ -188,6 +199,7 @@ export default function Pjcreate() {
                     <button 
                         type="button" 
                         onClick={handleCreate}
+                        disabled={isSubmitting}
                         style={{ 
                             flex: 2, 
                             padding: "14px", 
@@ -197,7 +209,7 @@ export default function Pjcreate() {
                             borderRadius: "12px", 
                         }}
                     >
-                        프로젝트 생성하기
+                        {isSubmitting ? '생성 중...' : '프로젝트 생성하기'}
                     </button>
                 </div>
             </div>

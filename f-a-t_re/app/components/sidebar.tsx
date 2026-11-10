@@ -1,15 +1,23 @@
 'use client';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { authApi, clearAccessToken } from '@/app/lib/api';
 
 export default function SideBar() {
     const pathname = usePathname();
+    const router = useRouter();
     const sideOpsList = [
         { name: '탐색', href: '/search' },
         { name: '프로젝트 생성', href: '/pjcreate' },
         { name: '채팅', href: '/chat' },
         { name: '마이페이지', href: '/mypage' },
     ];
+
+    const logout = async () => {
+        await authApi.logout().catch(() => undefined);
+        clearAccessToken();
+        router.replace('/login');
+    };
 
     return (
         <aside className="sideBar-container">
@@ -39,6 +47,7 @@ export default function SideBar() {
                     <h5>hwjeong</h5>
                     <span>1107 · FE</span>
                 </div>
+                <button type="button" className="sideBar-logout" onClick={logout}>로그아웃</button>
             </div>
         </aside>
     );

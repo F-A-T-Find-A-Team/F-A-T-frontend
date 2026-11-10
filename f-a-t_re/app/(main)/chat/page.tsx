@@ -1,45 +1,58 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { ApiError, chatApi, type ChatMessage, type ChatRoom, usersApi } from '@/app/lib/api';
 
 export default function ChatPage() {
-    // 채팅방 목록 데이터 예시
-    const chatRooms = [
-        {
-            id: 1,
-            name: '김태오 · PM',
-            preview: '주 2회, 화·목 저녁에 비대면…',
-            time: '1시간',
-            tag: '지원 전 커피챗',
-        },
-        {
-            id: 2,
-            name: '급식앱 팀 채팅방',
-            preview: "진행 상황이 '진행중'으로 변경…",
-            time: '2시간',
-            tag: '팀원 전용',
-        },
-    ];
-
-    const [activeRoomId, setActiveRoomId] = useState(1);
+    const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
+    const [activeRoomId, setActiveRoomId] = useState<number | null>(null);
     const [inputMessage, setInputMessage] = useState('');
-    
-    // 대화 내역 상태 예시
-    const [messages, setMessages] = useState([
-        { id: 1, sender: 'incoming', text: '지원 전 커피챗이에요 · 부담 없이 물어보세요' },
-        { id: 2, sender: 'outgoing', text: '안녕하세요! FE로 지원 생각 중인데 회의는 얼마나 자주 하나요?' },
-        { id: 3, sender: 'incoming', text: '주 2회, 화·목 저녁에 비대면으로 해요. 부담 크지 않아요!' },
-        { id: 4, sender: 'system', text: "진행 상황이 '진행중'으로 변경됐어요" },
-    ]);
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+    const [error, setError] = useState('');
+    const [isSending, setIsSending] = useState(false);
+    const activeRoom = chatRooms.find((room) => room.id === activeRoomId) ?? null;
 
-    const handleSendMessage = () => {
-        if (!inputMessage.trim()) return;
+    useEffect(() => {
+        let cancelled = false;
+        Promise.all([chatApi.rooms(), usersApi.me()])
+            .then(([roomResult, profile]) => {
+                if (cancelled) return;
+                setChatRooms(roomResult.items);
+                const requestedRoomId = Number(new URLSearchParams(window.location.search).get('roomId'));
+                const requestedRoom = roomResult.items.find((room) => room.id === requestedRoomId);
+                setActiveRoomId(requestedRoom?.id ?? roomResult.items[0]?.id ?? null);
+                setCurrentUserId(profile.id);
+            })
+            .catch((err) => {
+                if (!cancelled) setError(err instanceof ApiError ? err.message : '채팅 목록을 불러오지 못했습니다.');
+            });
+        return () => { cancelled = true; };
+    }, []);
 
-        // 메시지 전송 로직
-        setMessages([
-            ...messages,
-            { id: Date.now(), sender: 'outgoing', text: inputMessage }
-        ]);
-        setInputMessage('');
+    useEffect(() => {
+        if (activeRoomId === null) return;
+        let cancelled = false;
+        chatApi.messages(activeRoomId, { size: 30 })
+            .then((result) => { if (!cancelled) setMessages(result.items); })
+            .catch((err) => { if (!cancelled) setError(err instanceof ApiError ? err.message : '메시지를 불러오지 못했습니다.'); });
+        return () => { cancelled = true; };
+    }, [activeRoomId]);
+
+    const handleSendMessage = async () => {
+        const content = inputMessage.trim();
+        if (!content || activeRoomId === null || isSending) return;
+        setIsSending(true);
+        setError('');
+        try {
+            await chatApi.sendMessage(activeRoomId, content, crypto.randomUUID());
+            const result = await chatApi.messages(activeRoomId, { size: 30 });
+            setMessages(result.items);
+            setInputMessage('');
+        } catch (err) {
+            setError(err instanceof ApiError ? err.message : '메시지를 전송하지 못했습니다.');
+        } finally {
+            setIsSending(false);
+        }
     };
 
     return (
@@ -48,24 +61,25 @@ export default function ChatPage() {
             <aside className="chat-sidebar">
                 <div className="chat-sidebar-header">
                     <h2>채팅</h2>
-                    <button type="button" className="chat-empty-btn">빈 상태</button>
+                    <span>{chatRooms.length}개 방</span>
                 </div>
 
                 <div className="chat-room-list">
                     {chatRooms.map((room) => (
-                        <div 
+                        <button
                             key={room.id}
                             className={`chat-room-item ${activeRoomId === room.id ? 'active' : ''}`}
-                            onClick={() => setActiveRoomId(room.id)}
+                            onClick={() => { setMessages([]); setActiveRoomId(room.id); }}
                         >
                             <div className="chat-room-header">
                                 <span className="chat-room-title">{room.name}</span>
-                                <span className="chat-room-time">{room.time}</span>
+                                <span className="chat-room-time">{room.unreadCount || ''}</span>
                             </div>
-                            <div className="chat-room-preview">{room.preview}</div>
-                            <span className="chat-tag">{room.tag}</span>
-                        </div>
+                            <div className="chat-room-preview">{room.lastMessage}</div>
+                            <span className="chat-tag">{room.type === 'DIRECT' ? '커피챗' : '팀 채팅'}</span>
+                        </button>
                     ))}
+                    {chatRooms.length === 0 && !error && <p className="chat-room-preview">참여 중인 채팅방이 없습니다.</p>}
                 </div>
             </aside>
 
@@ -73,11 +87,11 @@ export default function ChatPage() {
             <main className="chat-main">
                 {/* 상단 프로필 헤더 */}
                 <header className="chat-main-header">
-                    <div className="chat-user-avatar">태</div>
+                    <div className="chat-user-avatar">{activeRoom?.name.slice(0, 1) ?? '?'}</div>
                     <div className="chat-user-info">
-                        <h3>김태오 · PM</h3>
+                        <h3>{activeRoom?.name ?? '채팅방을 선택하세요'}</h3>
                         <div className="chat-user-status">
-                            <span className="status-dot"></span> 온라인 · 지원 전 커피챗
+                            <span className="status-dot"></span> {activeRoom?.type === 'DIRECT' ? '커피챗' : activeRoom ? '팀 채팅' : '대화 내역'}
                         </div>
                     </div>
                 </header>
@@ -85,35 +99,31 @@ export default function ChatPage() {
                 {/* 메시지 스크롤 영역 */}
                 <div className="chat-messages-area">
                     {messages.map((msg) => {
-                        if (msg.sender === 'system') {
-                            return (
-                                <div key={msg.id} className="chat-system-notice">
-                                    <span>💬 {msg.text}</span>
-                                </div>
-                            );
-                        }
-
+                        const outgoing = msg.sender.id === currentUserId;
                         return (
                             <div 
                                 key={msg.id} 
-                                className={`message-wrapper ${msg.sender === 'outgoing' ? 'outgoing' : 'incoming'}`}
+                                className={`message-wrapper ${outgoing ? 'outgoing' : 'incoming'}`}
                             >
                                 <div className="message-bubble">
-                                    {msg.text}
+                                    {msg.content}
                                 </div>
                             </div>
                         );
                     })}
+                    {messages.length === 0 && activeRoom && <p className="chat-room-preview">첫 메시지를 보내보세요.</p>}
                 </div>
 
                 {/* 하단 입력 영역 */}
                 <div className="chat-input-area">
+                    {error && <p role="alert">{error}</p>}
                     <input 
                         type="text"
                         className="chat-input"
                         autoComplete="off"
                         value={inputMessage}
                         onChange={(e) => setInputMessage(e.target.value)}
+                        disabled={!activeRoom || isSending}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
                                 e.preventDefault();
@@ -126,6 +136,7 @@ export default function ChatPage() {
                         type="button" 
                         className="chat-send-btn"
                         onClick={handleSendMessage}
+                        disabled={!activeRoom || isSending}
                     >
                         ↑
                     </button>

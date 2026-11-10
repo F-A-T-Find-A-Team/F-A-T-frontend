@@ -2,14 +2,19 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ApiError, authApi } from '@/app/lib/api';
+import { useSignupDraft } from '@/app/lib/signup-context';
 
 export default function Sign() {
     const router = useRouter();
+    const { setDraft } = useSignupDraft();
 
     // 상태 관리 
     const [nickname, setNickname] = useState('');
     const [idNum, setIdNum] = useState('');
     const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [bio, setBio] = useState('');
     const [gender, setGender] = useState('남');
     
@@ -19,6 +24,8 @@ export default function Sign() {
     // 관심 기술 스택 관련 상태
     const [techInput, setTechInput] = useState('');
     const [techStacks, setTechStacks] = useState<string[]>([]);
+    const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // 전공 리스트
     const majorList = ['FE', 'BE', 'EM(FW)', 'EM(HW)', 'Flutter', 'android', 'iOS', 'UI/UX', 'Game', 'security', 'AI'];
@@ -36,8 +43,33 @@ export default function Sign() {
         setTechStacks(techStacks.filter(t => t !== tech));
     };
 
-    const login = () => {
-        router.push('/verify');
+    const startVerification = async () => {
+        if (!email.trim() || !password || !nickname.trim() || !idNum.trim() || !name.trim()) {
+            setError('이메일, 비밀번호, 닉네임, 학번, 이름을 입력해주세요.');
+            return;
+        }
+        setIsSubmitting(true);
+        setError('');
+        try {
+            const result = await authApi.sendVerification(email.trim());
+            setDraft({
+                email: email.trim(),
+                password,
+                nickname: nickname.trim(),
+                studentId: idNum.trim(),
+                name: name.trim(),
+                gender: gender === '남' ? 'MALE' : gender === '여' ? 'FEMALE' : 'OTHER',
+                bio,
+                majors: [selectedMajor],
+                techStacks,
+                verificationId: result.verificationId,
+            });
+            router.push('/verify');
+        } catch (err) {
+            setError(err instanceof ApiError ? err.message : '인증 메일을 보낼 수 없습니다. API 주소를 확인해주세요.');
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     return (
@@ -72,6 +104,15 @@ export default function Sign() {
                             />
                         </div>
                     </div>
+                </div>
+
+                <div className="Sign-inputGroup">
+                    <label htmlFor="signup-email">학교 이메일</label>
+                    <input id="signup-email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="20261107@dsm.hs.kr" />
+                </div>
+                <div className="Sign-inputGroup">
+                    <label htmlFor="signup-password">비밀번호</label>
+                    <input id="signup-password" type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
                 </div>
 
                 <div className="Sign-inputGroup">
@@ -151,10 +192,9 @@ export default function Sign() {
                     </div>
                 </div>
 
-                <button type="button" className="Sign-submitBtn" onClick={() => {
-                    login();
-                }}>
-                    이메일 인증하고 계속하기
+                {error && <p role="alert" style={{ color: '#c2413b' }}>{error}</p>}
+                <button type="button" className="Sign-submitBtn" disabled={isSubmitting} onClick={startVerification}>
+                    {isSubmitting ? '인증 메일 보내는 중...' : '이메일 인증하고 계속하기'}
                 </button>
             </div>
         </main>

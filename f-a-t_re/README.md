@@ -16,6 +16,14 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Backend API
+
+Copy `env.example` to `.env.local` and set `NEXT_PUBLIC_API_BASE_URL` to the backend API root. The default points to `http://localhost:8080/api/v1`, matching the API host previously used by the login page. Restart the Next.js dev server after changing environment variables.
+
+GitHub OAuth is optional. Set `NEXT_PUBLIC_GITHUB_CLIENT_ID` and register `http://localhost:3000/login` and `http://localhost:3000/mypage` as allowed OAuth callback URLs to enable GitHub login and account linking.
+
+The API ZIP contains contract drafts, not a backend implementation. The backend must expose the documented routes, issue the refresh token as an HttpOnly cookie, and allow the frontend origin through CORS with credentials enabled. Without that backend, requests show the server error in the corresponding screen rather than falling back to mock data.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

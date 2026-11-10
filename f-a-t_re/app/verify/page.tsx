@@ -1,13 +1,22 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { ApiError, authApi } from '@/app/lib/api';
+import { useSignupDraft } from '@/app/lib/signup-context';
 
 export default function Verify() {
 
     const router = useRouter();
+    const { draft, setDraft } = useSignupDraft();
 
-    const [code, setCode] = useState('482913'); // 이미지처럼 초기값 세팅 (DEMO)
-    const [timeLeft, setTimeLeft] = useState(276); // 4분 36초 (276초)
+    const [code, setCode] = useState('');
+    const [timeLeft, setTimeLeft] = useState(300);
+    const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    useEffect(() => {
+        if (!draft) router.replace('/sign');
+    }, [draft, router]);
 
     // 타이머 기능
     useEffect(() => {
@@ -26,13 +35,45 @@ export default function Verify() {
     };
 
     // 재전송 클릭 이벤트
-    const handleResend = () => {
-        setTimeLeft(300); // 5분으로 재설정
-        alert('인증 코드가 재전송되었습니다.');
+    const handleResend = async () => {
+        if (!draft) return;
+        setError('');
+        try {
+            const result = await authApi.sendVerification(draft.email);
+            setDraft({ ...draft, verificationId: result.verificationId });
+            setTimeLeft(result.expiresInSeconds);
+        } catch (err) {
+            setError(err instanceof ApiError ? err.message : '인증 코드를 다시 보낼 수 없습니다.');
+        }
     };
 
-    const confirm = () => {
-        router.push('search');
+    const confirm = async () => {
+        if (!draft || code.length !== 6 || isSubmitting) return;
+        setIsSubmitting(true);
+        setError('');
+        try {
+            const verification = await authApi.verifyEmail(draft.verificationId, code);
+            await authApi.signup({
+                signupToken: verification.signupToken,
+                email: draft.email,
+                password: draft.password,
+                nickname: draft.nickname,
+                studentId: draft.studentId,
+                name: draft.name,
+                gender: draft.gender,
+                bio: draft.bio,
+                majors: draft.majors,
+                techStacks: draft.techStacks,
+                avatarFileId: null,
+            });
+            setDraft(null);
+            alert('회원가입이 완료되었습니다. 로그인해주세요.');
+            router.push('/login');
+        } catch (err) {
+            setError(err instanceof ApiError ? err.message : '인증을 완료할 수 없습니다.');
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     return (
@@ -58,7 +99,7 @@ export default function Verify() {
                 {/* 타이틀 및 안내문구 */}
                 <h2>2차 인증</h2>
                 <p className="Verify-description">
-                    <span className="Verify-email">20261107@dsm.hs.kr</span> 로 6자리 코드를 보냈어요.
+                    <span className="Verify-email">{draft?.email ?? ''}</span> 로 6자리 코드를 보냈어요.
                 </p>
 
                 {/* 인증번호 입력 영역 */}
@@ -72,15 +113,15 @@ export default function Verify() {
                         maxLength={6}
                         className="Verify-codeInput"
                         value={code}
-                        onChange={(e) => setCode(e.target.value)}
+                        inputMode="numeric"
+                        onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     />
                 </div>
 
+                {error && <p role="alert" style={{ color: '#c2413b' }}>{error}</p>}
                 {/* 인증 완료 버튼 */}
-                <button type="button" className="Verify-submitBtn" onClick={()=>{
-                    confirm();
-                }}>
-                    인증 완료
+                <button type="button" className="Verify-submitBtn" disabled={isSubmitting || code.length !== 6} onClick={confirm}>
+                    {isSubmitting ? '확인 중...' : '인증 완료'}
                 </button>
 
                 {/* 재전송 링크 */}
